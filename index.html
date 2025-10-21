@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MentalNet.xyz | SoccerCloud Dashboard</title>
+  <script src="data.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Press+Start+2P&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+  :root {
+    --bg-color: #000;
+    --text-color: white;
+    --accent-color: #007cffab;
+    --secondary-color: rgba(255,255,255,0.1);
+    --header-font: 'UnifrakturCook', cursive;
+    --body-font: 'Press Start 2P', monospace;
+    --lime: lime;
+    --red: #ff4141;
+  }
+  #matchLog {
+	  font-size: xx-small;
+	  text-decoration: underline white;
+	  line-height: 20px;
+  }
+  .tagline {
+        text-transform: full-width;
+        font-size: 14px;
+        word-break: keep-all;
+  }
+  a { color: var(--lime); }
+  a:hover { text-shadow: 0 0 5px var(--lime), 0 0 10px var(--lime); }
+  .fas { color: var(--lime); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background-image: radial-gradient(ellipse at top, #0a141f 0%, #000000 75%); color: var(--text-color); font-family: var(--body-font); line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  header { text-align: center; padding: 20px; border-bottom: 2px solid var(--accent-color); margin-bottom: 30px; }
+  h1 { font-family: var(--header-font); font-size: 2.5rem; color: var(--accent-color);  }
+  h2 { font-family: var(--header-font); font-size: 2rem; color: var(--accent-color); margin: 30px 0 15px; border-bottom: 1px solid var(--secondary-color); }
+  .btn { padding: 8px 14px; background: var(--accent-color); border: none; cursor: pointer; color: white; margin: 5px; font-family: var(--body-font); }
+  .btn:hover { opacity: 0.8; }
+  .btn.btn-danger { background: #9d0000; color: white; }
+
+  /* Dashboard Structure */
+  .dashboard-controls { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+  .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .instance-card { background: rgba(20,20,20,0.8); border: 1px solid var(--secondary-color); border-left: 4px solid var(--accent-color); padding: 15px; display: flex; flex-direction: column; }
+  .instance-card .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .instance-card .title { font-size: 0.9rem; }
+  .instance-card .id { font-size: 0.7rem; opacity: 0.6; }
+  .instance-card .body { flex-grow: 1; }
+  .instance-card .status { font-size: 0.8rem; margin-bottom: 10px; padding: 4px 8px; display: inline-block; border-radius: 4px; }
+  .instance-card .status.pending { background: #6c757d; color: white; }
+  .instance-card .status.running { background: #198754; color: white; }
+  .instance-card .status.completed { background: #0d6efd; color: white; }
+  .instance-card .progress-text { font-size: 0.8rem; height: 3em; overflow: hidden; }
+  .instance-card .footer { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  .instance-card .footer .btn { padding: 5px 10px; font-size: 0.7rem; }
+
+  /* Modal Styles */
+  .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+  .modal-content { background-color: #111; margin: 5% auto; padding: 20px; border: 2px solid var(--lime); width: 80%; max-width: 900px; position: relative; }
+  .modal-header { border-bottom: 1px solid var(--secondary-color); padding-bottom: 10px; margin-bottom: 20px; }
+  .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+  .close-btn:hover { color: white; }
+
+  /* Detail View Modal Content */
+  #detail-modal .scoreboard { text-align: center; margin-bottom: 10px; font-size: 1.1rem; padding: 10px; background: #000; }
+  #detail-modal .match-log { max-height: 300px; overflow-y: auto; background: #050505; padding: 10px; border: 1px solid var(--secondary-color); font-size: 0.8rem; line-height: 1.4; margin-bottom: 15px; }
+  .stats-wrap, .competition-panel, .history { margin-top: 15px; }
+
+  /* Form Styles (in modal) */
+  .sim-controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:10px; }
+  .sim-controls select { background:#222; color:var(--text-color); border:1px solid var(--secondary-color); padding:6px 8px; font-family: var(--body-font); }
+  .team-pickers { display:grid; gap:8px; margin-bottom:10px; }
+  .picker-row { display:flex; flex-wrap:wrap; gap:10px; }
+  .picker-row select { background:#222; color:var(--text-color); border:1px solid var(--secondary-color); padding:6px 8px; font-family: var(--body-font); }
+
+  /* Shared Stats Table Styling */
+  .stats-table, .standings-table { width: 100%; display: block; overflow-x: auto; border-collapse: collapse; font-size: 12px; }
+  .stats-table th, .stats-table td, .standings-table th, .standings-table td { border: 1px solid var(--secondary-color); padding: 6px 8px; text-align: center; }
+  .stats-table th, .standings-table th { background: rgba(0,0,0,0.5); color: var(--accent-color); }
+  .meta { font-size: 0.8rem; opacity: 0.9; margin-bottom: 6px; }
+  .recap { margin-top: 14px; padding: 12px; border: 1px dashed var(--secondary-color); background: rgba(10,10,10,0.8); }
+  .recap-title { font-family: var(--header-font); color: var(--accent-color); margin-bottom: 6px; text-shadow: 1px 1px lime; }
+  .history .item { border:1px dashed var(--secondary-color); padding:6px 8px; margin-bottom:6px; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>MentalNet SoccerCloud</h1>
+      <p class="tagline">Cloudified Soccer Simulation Environment</p>
+    </header>
+
+    <section id="simulation-dashboard">
+      <h2><i class="fas fa-server"></i> Simulation Instances</h2>
+      <div class="dashboard-controls">
+        <button class="btn" id="showCreateModalBtn"><i class="fas fa-plus-circle"></i> Create Simulation</button>
+      </div>
+      <div class="dashboard-grid" id="dashboardGrid">
+        </div>
+    </section>
+  </div>
+
+  <div id="createModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close-btn" data-modal="createModal">&times;</span>
+        <h2>Configure New Simulation</h2>
+      </div>
+      <div class="modal-body">
+        <div class="sim-controls">
+          <label>Mode:
+            <select id="modeSelect">
+              <option value="single">Single Match</option>
+              <option value="league4">4–Team League</option>
+              <option value="knockout4">4–Team Knockout</option>
+            </select>
+          </label>
+          <label><input type="checkbox" id="autoPick" checked> Auto‑pick teams</label>
+        </div>
+        <div class="team-pickers" id="teamPickers">
+          <div class="picker-row picker-single">
+            <label>Home: <select id="teamHome"></select></label>
+            <label>Away: <select id="teamAway"></select></label>
+          </div>
+          <div class="picker-row picker-group" style="display:none">
+            <label>Team A: <select id="team1"></select></label>
+            <label>Team B: <select id="team2"></select></label>
+            <label>Team C: <select id="team3"></select></label>
+            <label>Team D: <select id="team4"></select></label>
+          </div>
+        </div>
+        <button class="btn" id="launchBtn" type="button"><i class="fas fa-rocket"></i> Create Instance</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="detailModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close-btn" data-modal="detailModal">&times;</span>
+        <h2 id="detailModalTitle">Simulation Details</h2>
+      </div>
+      <div class="modal-body">
+        <div class="scoreboard" id="scoreboard"></div>
+        <div class="match-log" id="matchLog"></div>
+        <div class="stats-wrap" id="matchStats"></div>
+        <div class="competition-panel" id="competitionPanel"></div>
+        <div class="history" id="history"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// === HELPERS (Unchanged) ===
+const $ = (id)=>document.getElementById(id);
+function displayName(team){ return (TEAM_FLAGS[team] || "🏳️") + " " + team; }
+function randomPick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function profileFor(team){ return TEAM_PROFILES[team] || { formation: randomPick(FORMATIONS), tactic: randomPick(Object.keys(TACTICS)) }; }
+function fmt(m){ return String(m).padStart(2,'0'); }
+function uniqueRandomTeams(n){ const pool=[...teams], picked=[]; while(picked.length<n && pool.length){ const i=Math.floor(Math.random()*pool.length); picked.push(pool.splice(i,1)[0]); } return picked; }
+function penalties(home, away){ let h=0,a=0; for(let i=0;i<5;i++){ if(Math.random()<0.76) h++; if(Math.random()<0.76) a++; } let i=0; while(h===a){ if(Math.random()<0.76) h++; if(Math.random()<0.76) a++; if(i>20) break; } return {home:h, away:a, winner: h>a ? 'home' : 'away'};}
+
+// === NEW: SIMULATION INSTANCE & MANAGER ===
+class SimulationInstance {
+  constructor(id, type, teams) {
+    this.id = id;
+    this.type = type;
+    this.teams = teams;
+    this.status = 'pending'; // pending, running, completed
+    this.progressText = 'Ready to start.';
+    this.result = null;
+
+    // Data stores for detail view
+    this.logData = [];
+    this.scoreboardData = 'Waiting for kickoff...';
+    this.statsData = '';
+    this.competitionData = '';
+    this.historyData = [];
+  }
+
+  get title() {
+    switch(this.type) {
+      case 'single': return `Match: ${this.teams[0]} vs ${this.teams[1]}`;
+      case 'league4': return `4-Team League`;
+      case 'knockout4': return `4-Team Knockout`;
+      default: return 'Unknown Simulation';
+    }
+  }
+
+  renderCard() {
+    return `
+      <div class="instance-card" id="instance-${this.id}" data-id="${this.id}">
+        <div class="header">
+          <div class="title-block">
+            <div class="title">${this.title}</div>
+            <div class="id">ID: sim-${this.id}</div>
+          </div>
+          <span class="status ${this.status}">${this.status}</span>
+        </div>
+        <div class="body">
+          <div class="progress-text">${this.progressText}</div>
+        </div>
+        <div class="footer">
+          ${this.status === 'pending' ? `<button class="btn btn-start"><i class="fas fa-play"></i> Start</button>` : ''}
+          ${this.status === 'completed' ? `<button class="btn btn-export"><i class="fas fa-file-csv"></i> Export</button>` : ''}
+          <button class="btn btn-clone"><i class="fas fa-clone"></i> Clone</button>
+          <button class="btn btn-view"><i class="fas fa-eye"></i> View</button>
+          <button class="btn btn-danger btn-delete"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+      </div>
+    `;
+  }
+
+  updateCard() {
+    const card = $(`instance-${this.id}`);
+    if (!card) return;
+    card.querySelector('.status').textContent = this.status;
+    card.querySelector('.status').className = `status ${this.status}`;
+    card.querySelector('.progress-text').innerHTML = this.progressText;
+    if (this.status !== 'pending') {
+        const startBtn = card.querySelector('.btn-start');
+        if(startBtn) startBtn.remove();
+    }
+  }
+
+  async run() {
+      if (this.status !== 'pending') return;
+      this.status = 'running';
+      this.updateCard();
+
+      const callbacks = {
+          onLog: (msg) => { this.logData.push(msg); },
+          onScoreboard: (html) => {
+              this.scoreboardData = html;
+              this.progressText = html.replace(/<[^>]*>/g, '');
+              this.updateCard();
+          },
+          onStats: (html) => { this.statsData = html; },
+          onCompetitionUpdate: (html, type) => {
+              if (type === 'table') this.competitionData = html;
+              if (type === 'bracket') this.competitionData = html;
+          },
+          onHistoryUpdate: (item) => { this.historyData.push(item); },
+          onProgress: (text) => {
+              this.progressText = text;
+              this.updateCard();
+          }
+      };
+
+      try {
+          if (this.type === 'single') {
+              this.result = await runSingle(this.teams[0], this.teams[1], callbacks);
+          } else if (this.type === 'league4') {
+              this.result = await runLeague4(this.teams, callbacks);
+              this.progressText = `<strong>Champion:</strong> ${displayName(this.result.champion.team)}`;
+          } else if (this.type === 'knockout4') {
+              this.result = await runKnockout4(this.teams, callbacks);
+              this.progressText = `<strong>Champion:</strong> ${displayName(this.result.champion)} 🏆`;
+          }
+          this.status = 'completed';
+      } catch (e) {
+          console.error(`Simulation ${this.id} failed:`, e);
+          this.status = 'failed';
+          this.progressText = 'Error during simulation.';
+      }
+
+      this.updateCard();
+      SimulationManager.renderDashboard();
+  }
+
+    exportToCSV() {
+        if (this.status !== 'completed' || !this.result) {
+        console.error("Simulation not complete. Cannot export.");
+        return;
+        }
+
+        let csvContent = "";
+        let fileName = `sim-${this.id}-${this.type}-results.csv`;
+
+        const download = (content, name) => {
+        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", name);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        };
+
+        switch (this.type) {
+        case 'single': {
+            const { home, away, homeGoals, awayGoals, stats } = this.result;
+            const headers = "Category,Home Team,Away Team\n";
+            const teamRow = `Team,${home},${away}\n`;
+            const scoreRow = `Goals,${homeGoals},${awayGoals}\n`;
+            const statsHeaders = "Stat,Home Value,Away Value\n";
+            const statsRows = [
+            `Shots,${stats.home.shots},${stats.away.shots}`,
+            `Shots on Target,${stats.home.sot},${stats.away.sot}`,
+            `xG,${stats.home.xg.toFixed(2)},${stats.away.xg.toFixed(2)}`,
+            `Corners,${stats.home.corners},${stats.away.corners}`,
+            `Fouls,${stats.home.fouls},${stats.away.fouls}`,
+            `Yellow Cards,${stats.home.yellows},${stats.away.yellows}`,
+            `Saves,${stats.home.saves},${stats.away.saves}`
+            ].join('\n');
+            csvContent = headers + teamRow + scoreRow + "\n" + statsHeaders + statsRows;
+            break;
+        }
+
+        case 'league4': {
+            const { finalTable } = this.result;
+            const headers = "Team,P,W,D,L,GF,GA,GD,Pts\n";
+            const sorted = Object.values(finalTable).sort((a,b) => b.PTS - a.PTS || (b.GD - a.GD));
+            const rows = sorted.map(r => 
+            `${r.team},${r.P},${r.W},${r.D},${r.L},${r.GF},${r.GA},${r.GD},${r.PTS}`
+            ).join('\n');
+            csvContent = headers + rows;
+            break;
+        }
+
+        case 'knockout4': {
+            const headers = "Stage,Match Result\n";
+            const rows = this.historyData
+            .filter(item => item.includes('<strong>'))
+            .map(item => {
+                const cleanItem = item.replace(/<strong>|<\/strong>|🏆/g, '').replace(':', ',');
+                return cleanItem;
+            })
+            .join('\n');
+            csvContent = headers + rows;
+            break;
+        }
+        }
+
+        download(csvContent, fileName);
+    }
+}
+
+const SimulationManager = {
+  simulations: {},
+  nextId: 0,
+
+  create(type, teams) {
+    const id = this.nextId++;
+    const instance = new SimulationInstance(id, type, teams);
+    this.simulations[id] = instance;
+    this.renderDashboard();
+    return instance;
+  },
+
+  delete(id) {
+      delete this.simulations[id];
+      this.renderDashboard();
+  },
+
+  start(id) {
+    this.simulations[id]?.run();
+  },
+
+  view(id) {
+      const instance = this.simulations[id];
+      if (!instance) return;
+
+      $('detailModalTitle').textContent = `Details for sim-${id}: ${instance.title}`;
+
+      $('scoreboard').innerHTML = instance.scoreboardData;
+      $('matchLog').innerHTML = instance.logData.map(msg => `<p>${msg}</p>`).join('');
+      $('matchLog').scrollTop = $('matchLog').scrollHeight;
+      $('matchStats').innerHTML = instance.statsData;
+      $('competitionPanel').innerHTML = instance.competitionData;
+      $('history').innerHTML = instance.historyData.map(item => `<div class="item">${item}</div>`).join('');
+
+      detailModal.style.display = 'block';
+  },
+
+    export(id) {
+        this.simulations[id]?.exportToCSV();
+    },
+
+    // ADDED: Method to handle cloning an instance
+    clone(id) {
+        const instanceToClone = this.simulations[id];
+        if (!instanceToClone) return;
+
+        // Set the mode
+        modeSelect.value = instanceToClone.type;
+        // Important: Trigger change event to update the UI (team pickers)
+        modeSelect.dispatchEvent(new Event('change'));
+
+        // Pre-fill team selections
+        if (instanceToClone.type === 'single') {
+            teamHome.value = instanceToClone.teams[0];
+            teamAway.value = instanceToClone.teams[1];
+        } else { // league4 or knockout4
+            team1.value = instanceToClone.teams[0];
+            team2.value = instanceToClone.teams[1];
+            team3.value = instanceToClone.teams[2];
+            team4.value = instanceToClone.teams[3];
+        }
+
+        // Uncheck auto-pick and trigger its change event to enable the dropdowns
+        autoPick.checked = false;
+        autoPick.dispatchEvent(new Event('change'));
+
+        // Show the modal, ready for creation
+        createModal.style.display = 'block';
+    },
+
+  renderDashboard() {
+      const grid = $('dashboardGrid');
+      const ids = Object.keys(this.simulations);
+
+      if (ids.length === 0) {
+        grid.innerHTML = '<p id="noInstancesMsg">No simulations running. Click \'Create Simulation\' to get started.</p>';
+      } else {
+        grid.innerHTML = ids.map(id => this.simulations[id].renderCard()).join('');
+      }
+  }
+};
+
+// === UI FORM SETUP (inside modal) ===
+const createModal = $('createModal');
+const detailModal = $('detailModal');
+const showCreateModalBtn = $('showCreateModalBtn');
+const launchBtn = $('launchBtn');
+const modeSelect = $('modeSelect');
+const autoPick = $('autoPick');
+const teamHome = $('teamHome'), teamAway = $('teamAway'), team1 = $('team1'), team2 = $('team2'), team3 = $('team3'), team4 = $('team4');
+const pickersSingle = document.querySelector('.picker-single');
+const pickersGroup = document.querySelector('.picker-group');
+
+function setupForms() {
+    function optionHTML(team){ return `<option value="${team}">${displayName(team)}</option>`; }
+    function populateSelect(sel){ sel.innerHTML = teams.map(optionHTML).join(''); }
+    [teamHome, teamAway, team1, team2, team3, team4].forEach(populateSelect);
+    modeSelect.addEventListener('change', ()=>{
+      if(modeSelect.value==='single'){ pickersSingle.style.display='flex'; pickersGroup.style.display='none'; }
+      else { pickersSingle.style.display='none'; pickersGroup.style.display='flex'; }
+    });
+    modeSelect.dispatchEvent(new Event('change'));
+    autoPick.addEventListener('change', ()=>{
+      const disable = autoPick.checked;
+      [teamHome, teamAway, team1, team2, team3, team4].forEach(s=> s.disabled = disable);
+    });
+    autoPick.dispatchEvent(new Event('change'));
+}
+setupForms();
+
+// === MODAL HANDLING ===
+showCreateModalBtn.onclick = () => createModal.style.display = 'block';
+document.querySelectorAll('.close-btn').forEach(btn => {
+    btn.onclick = () => $(btn.dataset.modal).style.display = 'none';
+});
+window.onclick = (event) => {
+  if (event.target == createModal) createModal.style.display = "none";
+  if (event.target == detailModal) detailModal.style.display = "none";
+};
+
+// === LAUNCH & EVENT DELEGATION ===
+launchBtn.onclick = () => {
+    const type = modeSelect.value;
+    let selectedTeams = [];
+    if (type === 'single') {
+        selectedTeams = autoPick.checked ? uniqueRandomTeams(2) : [teamHome.value, teamAway.value];
+    } else {
+        selectedTeams = autoPick.checked ? uniqueRandomTeams(4) : [team1.value, team2.value, team3.value, team4.value];
+    }
+    SimulationManager.create(type, selectedTeams);
+    createModal.style.display = 'none';
+};
+
+$('dashboardGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.instance-card');
+    if (!card) return;
+    const id = card.dataset.id;
+    if (e.target.closest('.btn-start')) SimulationManager.start(id);
+    if (e.target.closest('.btn-view')) SimulationManager.view(id);
+    if (e.target.closest('.btn-export')) SimulationManager.export(id);
+    // ADDED: Listener for the clone button
+    if (e.target.closest('.btn-clone')) SimulationManager.clone(id);
+    if (e.target.closest('.btn-delete')) SimulationManager.delete(id);
+});
+
+// === REFACTORED CORE SIMULATION LOGIC (Unchanged) ===
+
+function generateRecap(home, away, homeP, awayP, homeGoals, awayGoals, stats, homePoss, awayPoss){
+  const winner = homeGoals>awayGoals ? displayName(home) : awayGoals>homeGoals ? displayName(away) : null;
+  let verdict = winner ? `${winner} ${homeGoals>awayGoals?homeGoals:awayGoals}-${homeGoals>awayGoals?awayGoals:homeGoals} win.` : `It finishes level at ${homeGoals}-${awayGoals}.`;
+  const xgCall = stats.home.xg>stats.away.xg ? `${displayName(home)} edge xG ${stats.home.xg.toFixed(2)} to ${stats.away.xg.toFixed(2)}.` : stats.away.xg>stats.home.xg ? `${displayName(away)} lead xG ${stats.away.xg.toFixed(2)} to ${stats.home.xg.toFixed(2)}.` : `xG dead even at ${stats.home.xg.toFixed(2)}.`;
+  const style = homePoss>60? `${displayName(home)} control ${homePoss}% of the ball.`: awayPoss>60? `${displayName(away)} dominate ${awayPoss}% possession.`: `Possession fairly balanced (${homePoss}%–${awayPoss}%).`;
+  const keepers = (stats.home.saves+stats.away.saves)>=6 ? `Keepers busy with ${stats.home.saves+stats.away.saves} combined saves.` : '';
+  const discipline = (stats.home.yellows+stats.away.yellows)>=3 ? ` Card count: ${stats.home.yellows+stats.away.yellows}.` : '';
+  return `<div class="recap" style="margin-top:10px"><h3 class="recap-title">Match Recap</h3><p>${verdict}</p><p>${xgCall} ${style} ${keepers}${discipline}</p><p>Setups: ${displayName(home)} — ${homeP.formation} (${TACTICS[homeP.tactic].label}) | ${displayName(away)} — ${awayP.formation} (${TACTICS[awayP.tactic].label}).</p></div>`;
+}
+
+function simulateMatch(home, away, callbacks, speed=100) {
+  return new Promise(resolve => {
+    const homeP = profileFor(home); const awayP = profileFor(away);
+    let minute=0, homeGoals=0, awayGoals=0;
+    const stats = { home:{ shots:0, sot:0, xg:0, corners:0, fouls:0, yellows:0, offsides:0, saves:0, attacks:0 }, away:{ shots:0, sot:0, xg:0, corners:0, fouls:0, yellows:0, offsides:0, saves:0, attacks:0 } };
+
+    function renderScore() {
+        callbacks.onScoreboard(`${displayName(home)} (${homeP.formation}) ${homeGoals} - ${awayGoals} ${displayName(away)} (${awayP.formation}) | ${fmt(minute)}'`);
+    }
+
+    function renderStats() {
+      const homePoss = Math.round( (stats.home.attacks * (homeP.tactic==='possession'?1.15:1)) / ((stats.home.attacks * (homeP.tactic==='possession'?1.15:1)) + (stats.away.attacks * (awayP.tactic==='possession'?1.15:1))) * 100 ) || 50;
+      const awayPoss = 100 - homePoss;
+      const table = `<div class="meta">Tactics: <strong>${displayName(home)}</strong> — ${TACTICS[homeP.tactic].label} | <strong>${displayName(away)}</strong> — ${TACTICS[awayP.tactic].label}</div><table class="stats-table"><thead><tr><th>Stat</th><th>${displayName(home)}</th><th>${displayName(away)}</th></tr></thead><tbody><tr><td>Shots (On Target)</td><td>${stats.home.shots} (${stats.home.sot})</td><td>${stats.away.shots} (${stats.away.sot})</td></tr><tr><td>xG (expected goals)</td><td>${stats.home.xg.toFixed(2)}</td><td>${stats.away.xg.toFixed(2)}</td></tr><tr><td>Corners</td><td>${stats.home.corners}</td><td>${stats.away.corners}</td></tr><tr><td>Fouls (Yellows)</td><td>${stats.home.fouls} (${stats.home.yellows})</td><td>${stats.away.fouls} (${stats.away.yellows})</td></tr><tr><td>Offsides</td><td>${stats.home.offsides}</td><td>${stats.away.offsides}</td></tr><tr><td>Saves</td><td>${stats.home.saves}</td><td>${stats.away.saves}</td></tr><tr><td>Possession %</td><td>${homePoss}%</td><td>${awayPoss}%</td></tr></tbody></table>`;
+      const recap = generateRecap(home, away, homeP, awayP, homeGoals, awayGoals, stats, homePoss, awayPoss);
+      callbacks.onStats(table + recap);
+    }
+
+    let loop;
+    function halftime() { clearInterval(loop); callbacks.onLog(`Halftime — ${displayName(home)} ${homeGoals}-${awayGoals} ${displayName(away)}`); setTimeout(()=>{ minute=45; loop=setInterval(tick, speed); }, 400); }
+    function fulltime() { clearInterval(loop); callbacks.onLog(`Full time — ${displayName(home)} ${homeGoals}-${awayGoals} ${displayName(away)}`); renderStats(); resolve({home, away, homeGoals, awayGoals, stats, profiles:{home:homeP, away:awayP}}); }
+    function chance(p){ return Math.random() < p; }
+
+    function tick() {
+      minute++;
+      const pressureBoost = (minute<15 || minute>75) ? 1.2 : 1.0;
+      const homeBias = TACTICS[homeP.tactic].attackBias; const awayBias = TACTICS[awayP.tactic].attackBias;
+      const homeAttacks = Math.random() * (homeBias + awayBias) < homeBias;
+      const atk = homeAttacks ? 'home' : 'away', def = homeAttacks ? 'away' : 'home';
+      const atkTeam = homeAttacks ? home : away, defTeam = homeAttacks ? away : home;
+      const atkProf = homeAttacks ? homeP : awayP, defProf = homeAttacks ? awayP : homeP;
+      const atkStats = stats[atk], defStats = stats[def];
+
+      if(chance(0.24 * pressureBoost)){
+        atkStats.attacks++;
+        const fastBreak = chance(TACTICS[atkProf.tactic].fastBreak);
+        if(chance((fastBreak?0.75:0.55) * pressureBoost)){
+          atkStats.shots++;
+          let xg = fastBreak ? (0.20 + Math.random()*0.25) : (0.05 + Math.random()*0.22);
+          xg *= TACTICS[atkProf.tactic].goalMult; xg /= TACTICS[defProf.tactic].blockMult;
+          const onTarget = chance(0.52); if(onTarget) atkStats.sot++;
+          const isGoal = onTarget && chance(xg);
+          if(isGoal){ if(homeAttacks) homeGoals++; else awayGoals++; const finish = fastBreak?'cut‑back finish':'drilled low'; callbacks.onLog(`${fmt(minute)}' GOOOOAL — ${displayName(atkTeam)} (${finish}, xG ${xg.toFixed(2)})`); }
+          else if(onTarget){ defStats.saves++; callbacks.onLog(`${fmt(minute)}' Big save by ${displayName(defTeam)}'s keeper!`); }
+          else if(chance(0.25)){ callbacks.onLog(`${fmt(minute)}' ${displayName(atkTeam)} fire it just wide.`); }
+          atkStats.xg += xg;
+        }
+        if(chance(0.05 * TACTICS[atkProf.tactic].attackBias)){ atkStats.corners++; callbacks.onLog(`${fmt(minute)}' Corner to ${displayName(atkTeam)}.`); }
+        if(chance(0.035 + 0.02*TACTICS[atkProf.tactic].fastBreak)){ atkStats.offsides++; callbacks.onLog(`${fmt(minute)}' Flag up — ${displayName(atkTeam)} caught offside.`); }
+      }
+      if(chance(0.07 * TACTICS[atkProf.tactic].pressMult)){ defStats.fouls++; if(chance(0.22 * TACTICS[atkProf.tactic].pressMult)){ defStats.yellows++; callbacks.onLog(`${fmt(minute)}' Yellow card to ${displayName(defTeam)}.`); } }
+
+      renderScore();
+      if(minute===45) return halftime(); if(minute>=90) return fulltime();
+    }
+
+    callbacks.onLog(`Kickoff! ${displayName(home)} (${homeP.formation}, ${TACTICS[homeP.tactic].label}) vs ${displayName(away)} (${awayP.formation}, ${TACTICS[awayP.tactic].label})`);
+    renderScore();
+    loop = setInterval(tick, speed);
+  });
+}
+
+async function runSingle(home, away, callbacks) {
+    return await simulateMatch(home, away, callbacks);
+}
+
+async function runLeague4(four, callbacks) {
+    function fixturesForFour([a,b,c,d]){ return [[a,b],[c,d],[a,c],[b,d],[a,d],[b,c]]; }
+    function initStandings(teams){ const obj={}; teams.forEach(t=> obj[t]={ team:t, P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,PTS:0 }); return obj;}
+    function renderStandingsTable(table, onUpdate){
+        const rows = Object.values(table).sort((x,y)=> y.PTS-x.PTS || (y.GD-x.GD) || (y.GF-x.GF) || x.team.localeCompare(y.team))
+            .map(r=>`<tr><td>${displayName(r.team)}</td><td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF}</td><td>${r.GA}</td><td>${r.GD}</td><td>${r.PTS}</td></tr>`).join('');
+        const html = `<h3 style="margin:8px 0">League Table</h3><table class="standings-table"><thead><tr><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows}</tbody></table>`;
+        onUpdate(html, 'table');
+    }
+
+    const fixtures = fixturesForFour(four);
+    const table = initStandings(four);
+    let i = 0;
+    for (const [h, a] of fixtures) {
+        i++;
+        callbacks.onProgress(`Running League Match ${i}/${fixtures.length}...`);
+        const res = await simulateMatch(h, a, callbacks);
+
+        table[h].P++; table[a].P++; table[h].GF+=res.homeGoals; table[h].GA+=res.awayGoals; table[a].GF+=res.awayGoals; table[a].GA+=res.homeGoals;
+        table[h].GD = table[h].GF - table[h].GA; table[a].GD = table[a].GF - table[a].GA;
+        if(res.homeGoals>res.awayGoals){ table[h].W++; table[a].L++; table[h].PTS+=3; }
+        else if(res.homeGoals<res.awayGoals){ table[a].W++; table[h].L++; table[a].PTS+=3; }
+        else { table[h].D++; table[a].D++; table[h].PTS+=1; table[a].PTS+=1; }
+
+        renderStandingsTable(table, callbacks.onCompetitionUpdate);
+        callbacks.onHistoryUpdate(`${displayName(h)} ${res.homeGoals}-${res.awayGoals} ${displayName(a)}`);
+        await new Promise(r => setTimeout(r, 500));
+    }
+
+    const sorted = Object.values(table).sort((x,y)=> y.PTS-x.PTS || (y.GD-x.GD) || (y.GF-x.GF) || x.team.localeCompare(y.team));
+    const champ = sorted[0];
+    callbacks.onHistoryUpdate(`<strong>Champion:</strong> ${displayName(champ.team)} with ${champ.PTS} pts.`);
+    return { champion: champ, finalTable: table };
+}
+
+async function runKnockout4(four, callbacks) {
+    const bracketHTML = `<h3 style="margin:8px 0">Knockout Bracket</h3>`;
+    callbacks.onCompetitionUpdate(bracketHTML, 'bracket');
+
+    const semis = [[four[0], four[3]], [four[1], four[2]]];
+    const winners=[], losers=[];
+
+    for (let i=0; i<semis.length; i++) {
+        const [h, a] = semis[i];
+        callbacks.onProgress(`Running Semi-final ${i+1}/2...`);
+        const res = await simulateMatch(h, a, callbacks);
+
+        let line = `${displayName(h)} ${res.homeGoals}-${res.awayGoals} ${displayName(a)}`;
+        if (res.homeGoals === res.awayGoals) {
+            const ps = penalties(h,a);
+            line += ` (pens ${ps.home}-${ps.away})`;
+            if (ps.winner === 'home') { winners.push(h); losers.push(a); }
+            else { winners.push(a); losers.push(h); }
+        } else {
+            if (res.homeGoals > res.awayGoals) { winners.push(h); losers.push(a); }
+            else { winners.push(a); losers.push(h); }
+        }
+        callbacks.onHistoryUpdate(`<strong>Semi ${i+1}:</strong> ${line}`);
+        await new Promise(r => setTimeout(r, 500));
+    }
+
+    callbacks.onProgress(`Running Final...`);
+    const resF = await simulateMatch(winners[0], winners[1], callbacks);
+    let lineF = `${displayName(winners[0])} ${resF.homeGoals}-${resF.awayGoals} ${displayName(winners[1])}`;
+    let champTeam;
+    if (resF.homeGoals === resF.awayGoals) {
+        const ps = penalties(winners[0], winners[1]);
+        lineF += ` (pens ${ps.home}-${ps.away})`;
+        champTeam = ps.winner === 'home' ? winners[0] : winners[1];
+    } else {
+        champTeam = resF.homeGoals > resF.awayGoals ? winners[0] : winners[1];
+    }
+    callbacks.onHistoryUpdate(`<strong>Final:</strong> ${lineF}`);
+    callbacks.onHistoryUpdate(`<strong>Champion:</strong> ${displayName(champTeam)} 🏆`);
+    return { champion: champTeam };
+}
+
+// Initial Render
+SimulationManager.renderDashboard();
+
+</script>
+</body>
+</html>
+
