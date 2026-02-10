@@ -100,6 +100,7 @@ fn quick_mode(home: Option<String>, away: Option<String>, base_seed: u64) -> io:
     if let sim::SimOutcome::Single(m) = prepared.outcome {
         println!("{} {}-{} {}", m.home, m.home_goals, m.away_goals, m.away);
         println!("xG {:.2} - {:.2}", m.stats.home.xg, m.stats.away.xg);
+        println!("Possession {}% - {}%", m.home_possession, m.away_possession);
     }
 
     println!("-- log --");

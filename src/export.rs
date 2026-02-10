@@ -67,6 +67,14 @@ pub fn simulation_to_csv_bytes(sim: &PreparedSimulation) -> io::Result<Vec<u8>> 
             write_row(
                 &mut out,
                 &[
+                    "Possession".to_string(),
+                    format!("{}%", m.home_possession),
+                    format!("{}%", m.away_possession),
+                ],
+            )?;
+            write_row(
+                &mut out,
+                &[
                     "Corners".to_string(),
                     m.stats.home.corners.to_string(),
                     m.stats.away.corners.to_string(),

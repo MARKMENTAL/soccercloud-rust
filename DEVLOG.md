@@ -54,3 +54,16 @@
 - Updated `quick` command to support optional `--home` / `--away`:
   - If missing, CPU auto-fills from remaining teams.
   - Same seed yields the same auto-filled teams and outcomes.
+
+## 2026-02-10 - Live standings/bracket updates + possession surfacing
+
+### Scope completed
+- Added explicit possession fields to match results and surfaced them in quick mode output.
+- Added possession row to single-match CSV export output.
+- Implemented live detail updates driven by simulation frames:
+  - per-frame stats updates
+  - per-frame competition panel updates
+  - incremental history updates
+- Added live league standings snapshots after each fixture.
+- Added ASCII knockout tree bracket snapshots and updates after each semifinal/final.
+- Tuned detail view layout to allocate more space to stats/competition/history panels.

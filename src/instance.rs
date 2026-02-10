@@ -56,9 +56,9 @@ impl SimulationInstance {
         let mut rng = Rng::new(self.seed);
         let prepared = run_simulation(self.sim_type, &self.teams, &mut rng);
         let total_frames = prepared.frames.len();
-        self.stats_lines = prepared.stats_lines.clone();
-        self.competition_lines = prepared.competition_lines.clone();
-        self.history_lines = prepared.history_lines.clone();
+        self.stats_lines.clear();
+        self.competition_lines.clear();
+        self.history_lines.clear();
         self.status = SimStatus::Running {
             frame_index: 0,
             total_frames,
@@ -100,6 +100,15 @@ impl SimulationInstance {
             self.scoreboard = frame.scoreboard;
             for line in frame.logs {
                 self.push_log(line);
+            }
+            if let Some(stats) = frame.stats_lines {
+                self.stats_lines = stats;
+            }
+            if let Some(comp) = frame.competition_lines {
+                self.competition_lines = comp;
+            }
+            for item in frame.history_append {
+                self.history_lines.push(item);
             }
             frame_index += 1;
         }
