@@ -19,7 +19,7 @@ pub fn draw(f: &mut Frame<'_>, app: &App) {
         ])
         .split(f.area());
 
-    let header = Paragraph::new("MentalNet SoccerCloud | n=single l=league4 o=knockout4 s=start c=clone d=delete e=export v=detail q=quit")
+    let header = Paragraph::new("MentalNet SoccerCloud | n/l/o create | s start | c clone | d delete | e export | v detail | q quit")
         .block(Block::default().title("Dashboard").borders(Borders::ALL))
         .style(Style::default().fg(Color::Cyan));
     f.render_widget(header, areas[0]);
@@ -31,11 +31,15 @@ pub fn draw(f: &mut Frame<'_>, app: &App) {
     }
 
     let footer = Paragraph::new(format!(
-        "{} | speed={} (1/2/4/0)",
+        "{} | speed={} (1/2/4/0) | modal: m=manual p=cpu [ ] team Enter=create Esc=cancel",
         app.status_line,
         app.speed.label()
     ))
     .block(Block::default().borders(Borders::ALL).title("Status"))
     .style(Style::default().fg(Color::Green));
     f.render_widget(footer, areas[2]);
+
+    if let Some(draft) = &app.create_draft {
+        modal::render(f, f.area(), app, draft);
+    }
 }

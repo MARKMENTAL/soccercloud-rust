@@ -37,3 +37,20 @@
 - No external data files are required at runtime.
 - Team data is fully embedded in the binary.
 - CSV export format is mode-specific and generated with std I/O.
+
+## 2026-02-10 - Team selection controls (manual + CPU auto-fill)
+
+### Scope completed
+- Added interactive create modal in TUI for team slot configuration.
+- Added per-slot selection mode:
+  - `Manual` team selection
+  - `CPU auto-fill`
+- Kept deterministic behavior by resolving CPU team picks with the instance seed.
+- Added keyboard controls for modal flow:
+  - `m` set manual, `p` set CPU
+  - `[` / `]` or left/right to cycle manual teams
+  - up/down to switch slot
+  - Enter to create, Esc to cancel
+- Updated `quick` command to support optional `--home` / `--away`:
+  - If missing, CPU auto-fills from remaining teams.
+  - Same seed yields the same auto-filled teams and outcomes.

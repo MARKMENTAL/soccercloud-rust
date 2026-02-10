@@ -11,7 +11,7 @@ use std::io::{self, Write};
 
 use clap::{Parser, Subcommand, ValueEnum};
 
-use app::{run_tui, App, Speed};
+use app::{resolve_quick_single_teams, run_tui, App, Speed};
 use data::{display_name, TEAMS};
 use export::simulation_to_csv_bytes;
 use sim::{run_simulation, SimulationType};
@@ -35,9 +35,9 @@ struct Cli {
 enum Commands {
     Quick {
         #[arg(long)]
-        home: String,
+        home: Option<String>,
         #[arg(long)]
-        away: String,
+        away: Option<String>,
     },
     List,
     Export {
@@ -76,10 +76,7 @@ fn main() -> io::Result<()> {
             let app = App::new(base_seed, cli.speed);
             run_tui(app)
         }
-        Some(Commands::Quick { home, away }) => {
-            quick_mode(&home, &away, base_seed);
-            Ok(())
-        }
+        Some(Commands::Quick { home, away }) => quick_mode(home, away, base_seed),
         Some(Commands::List) => {
             for team in TEAMS {
                 println!("{}", display_name(team));
@@ -90,8 +87,11 @@ fn main() -> io::Result<()> {
     }
 }
 
-fn quick_mode(home: &str, away: &str, base_seed: u64) {
-    let teams = vec![home.to_string(), away.to_string()];
+fn quick_mode(home: Option<String>, away: Option<String>, base_seed: u64) -> io::Result<()> {
+    let teams =
+        resolve_quick_single_teams(home.as_deref(), away.as_deref(), derive_seed(base_seed, 1))
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
+
     let seed = derive_seed(base_seed, 1);
     let mut rng = Rng::new(seed);
     let prepared = run_simulation(SimulationType::Single, &teams, &mut rng);
@@ -108,6 +108,8 @@ fn quick_mode(home: &str, away: &str, base_seed: u64) {
             println!("{}", line);
         }
     }
+
+    Ok(())
 }
 
 fn export_mode(mode: ModeArg, out: String, teams: Vec<String>, base_seed: u64) -> io::Result<()> {
