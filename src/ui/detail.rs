@@ -1,6 +1,6 @@
 use ratatui::layout::{Constraint, Direction, Layout};
 use ratatui::prelude::*;
-use ratatui::widgets::{Block, Borders, List, ListItem, Paragraph, Tabs};
+use ratatui::widgets::{Block, Borders, List, ListItem, Paragraph};
 
 use crate::app::App;
 use crate::instance::SimStatus;
@@ -17,8 +17,8 @@ pub fn render(f: &mut Frame<'_>, area: Rect, app: &App) {
         .direction(Direction::Vertical)
         .constraints([
             Constraint::Length(3),
-            Constraint::Min(6),
-            Constraint::Length(12),
+            Constraint::Min(8),
+            Constraint::Length(2),
         ])
         .split(area);
 
@@ -69,41 +69,7 @@ pub fn render(f: &mut Frame<'_>, area: Rect, app: &App) {
     );
     f.render_widget(side, middle[1]);
 
-    let bottom = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(34),
-            Constraint::Percentage(33),
-            Constraint::Percentage(33),
-        ])
-        .split(chunks[2]);
-
-    let stats = List::new(
-        inst.stats_lines
-            .iter()
-            .map(|s| ListItem::new(s.clone()))
-            .collect::<Vec<_>>(),
-    )
-    .block(Block::default().title("Stats").borders(Borders::ALL));
-    let comp = List::new(
-        inst.competition_lines
-            .iter()
-            .map(|s| ListItem::new(s.clone()))
-            .collect::<Vec<_>>(),
-    )
-    .block(Block::default().title("Competition").borders(Borders::ALL));
-    let hist = List::new(
-        inst.history_lines
-            .iter()
-            .map(|s| ListItem::new(s.clone()))
-            .collect::<Vec<_>>(),
-    )
-    .block(Block::default().title("History").borders(Borders::ALL));
-
-    f.render_widget(stats, bottom[0]);
-    f.render_widget(comp, bottom[1]);
-    f.render_widget(hist, bottom[2]);
-
-    let tabs = Tabs::new(vec!["Dashboard", "Detail"]).select(1);
-    let _ = tabs;
+    let help = Paragraph::new("Open readable panels: t=Stats, g=Standings/Bracket, h=History")
+        .block(Block::default().borders(Borders::ALL).title("Panels"));
+    f.render_widget(help, chunks[2]);
 }

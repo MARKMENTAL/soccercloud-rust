@@ -54,8 +54,27 @@ pub struct App {
     pub selected: usize,
     pub show_detail: bool,
     pub create_draft: Option<CreateDraft>,
+    pub overlay_modal: Option<OverlayModal>,
+    pub overlay_scroll: usize,
     pub status_line: String,
     next_id: usize,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OverlayModal {
+    Stats,
+    Competition,
+    History,
+}
+
+impl OverlayModal {
+    pub fn title(self) -> &'static str {
+        match self {
+            OverlayModal::Stats => "Stats",
+            OverlayModal::Competition => "Standings / Bracket",
+            OverlayModal::History => "History",
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -106,6 +125,8 @@ impl App {
             selected: 0,
             show_detail: false,
             create_draft: None,
+            overlay_modal: None,
+            overlay_scroll: 0,
             status_line: format!("Ready. Seed={base_seed}, Speed={}", speed.label()),
             next_id: 0,
         }
@@ -119,6 +140,28 @@ impl App {
     pub fn cancel_create_draft(&mut self) {
         self.create_draft = None;
         self.status_line = "Create canceled".to_string();
+    }
+
+    pub fn open_overlay_modal(&mut self, modal: OverlayModal) {
+        self.show_detail = true;
+        self.overlay_modal = Some(modal);
+        self.overlay_scroll = 0;
+        self.status_line = format!("Opened {} modal", modal.title());
+    }
+
+    pub fn close_overlay_modal(&mut self) {
+        self.overlay_modal = None;
+        self.overlay_scroll = 0;
+        self.status_line = "Closed modal".to_string();
+    }
+
+    pub fn overlay_scroll_up(&mut self) {
+        self.overlay_scroll = self.overlay_scroll.saturating_sub(1);
+    }
+
+    pub fn overlay_scroll_down(&mut self) {
+        let max_scroll = self.active_overlay_line_count().saturating_sub(1);
+        self.overlay_scroll = (self.overlay_scroll + 1).min(max_scroll);
     }
 
     pub fn next_instance_seed_preview(&self) -> u64 {
@@ -289,6 +332,27 @@ impl App {
         self.instances.get(self.selected)
     }
 
+    fn active_overlay_line_count(&self) -> usize {
+        let Some(modal) = self.overlay_modal else {
+            return 0;
+        };
+        let Some(inst) = self.selected_instance() else {
+            return 0;
+        };
+
+        match modal {
+            OverlayModal::Stats => inst.stats_lines.len().max(1),
+            OverlayModal::Competition => {
+                if inst.competition_lines.is_empty() {
+                    1
+                } else {
+                    inst.competition_lines.len()
+                }
+            }
+            OverlayModal::History => inst.history_lines.len().max(1),
+        }
+    }
+
     pub fn select_prev(&mut self) {
         if self.instances.is_empty() {
             return;
@@ -348,6 +412,16 @@ pub fn run_tui(mut app: App) -> io::Result<()> {
                         continue;
                     }
 
+                    if app.overlay_modal.is_some() {
+                        match key.code {
+                            KeyCode::Esc | KeyCode::Char('q') => app.close_overlay_modal(),
+                            KeyCode::Up | KeyCode::Char('k') => app.overlay_scroll_up(),
+                            KeyCode::Down | KeyCode::Char('j') => app.overlay_scroll_down(),
+                            _ => {}
+                        }
+                        continue;
+                    }
+
                     match key.code {
                         KeyCode::Char('q') => running = false,
                         KeyCode::Up | KeyCode::Char('k') => app.select_prev(),
@@ -360,6 +434,9 @@ pub fn run_tui(mut app: App) -> io::Result<()> {
                         KeyCode::Char('d') => app.delete_selected(),
                         KeyCode::Enter | KeyCode::Char('v') => app.show_detail = !app.show_detail,
                         KeyCode::Char('e') => app.export_selected(),
+                        KeyCode::Char('t') => app.open_overlay_modal(OverlayModal::Stats),
+                        KeyCode::Char('g') => app.open_overlay_modal(OverlayModal::Competition),
+                        KeyCode::Char('h') => app.open_overlay_modal(OverlayModal::History),
                         KeyCode::Char('1') => app.cycle_speed(Speed::X1),
                         KeyCode::Char('2') => app.cycle_speed(Speed::X2),
                         KeyCode::Char('4') => app.cycle_speed(Speed::X4),

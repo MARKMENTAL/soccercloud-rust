@@ -67,3 +67,14 @@
 - Added live league standings snapshots after each fixture.
 - Added ASCII knockout tree bracket snapshots and updates after each semifinal/final.
 - Tuned detail view layout to allocate more space to stats/competition/history panels.
+
+## 2026-02-10 - Fullscreen info modals for readability
+
+### Scope completed
+- Added dedicated fullscreen overlay modals for:
+  - Stats (`t`)
+  - Standings/Bracket (`g`)
+  - History (`h`)
+- Added modal scrolling controls (`j/k` or up/down) and close controls (`Esc` or `q`).
+- Simplified detail view to focus on scoreboard, logs, and instance info.
+- Added detail-panel hint bar to direct users to the new dedicated modals.
