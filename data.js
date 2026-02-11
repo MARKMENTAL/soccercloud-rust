@@ -6,6 +6,50 @@ const state = {
 };
 
 const $ = (id) => document.getElementById(id);
+const THEME_STORAGE_KEY = "soccercloud.web.theme";
+const THEMES = {
+  "default-light": "Default (Light)",
+  dark: "Dark",
+  matcha: "Matcha",
+  "black-mesa": "Black Mesa",
+};
+
+function isThemeAllowed(theme) {
+  return Object.prototype.hasOwnProperty.call(THEMES, theme);
+}
+
+function getSavedTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved && isThemeAllowed(saved)) {
+      return saved;
+    }
+  } catch (_) {}
+  return "default-light";
+}
+
+function applyTheme(theme) {
+  const normalized = isThemeAllowed(theme) ? theme : "default-light";
+  document.documentElement.dataset.theme = normalized;
+  const select = $("themeSelect");
+  if (select && select.value !== normalized) {
+    select.value = normalized;
+  }
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, normalized);
+  } catch (_) {}
+}
+
+function initThemeControls() {
+  const select = $("themeSelect");
+  if (!select) return;
+  const initial = getSavedTheme();
+  applyTheme(initial);
+  select.addEventListener("change", () => {
+    applyTheme(select.value);
+    setStatus(`Theme: ${THEMES[select.value] || "Default (Light)"}`);
+  });
+}
 
 function setStatus(message) {
   $("statusText").textContent = message;
@@ -371,6 +415,7 @@ function bindEvents() {
 }
 
 async function boot() {
+  initThemeControls();
   bindEvents();
   try {
     setStatus("Loading teams and simulations...");

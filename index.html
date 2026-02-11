@@ -4,6 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SoccerCloud Web</title>
+  <script>
+    (function () {
+      var key = "soccercloud.web.theme";
+      var allowed = {
+        "default-light": true,
+        dark: true,
+        matcha: true,
+        "black-mesa": true,
+      };
+      try {
+        var saved = localStorage.getItem(key);
+        if (saved && allowed[saved]) {
+          document.documentElement.setAttribute("data-theme", saved);
+        }
+      } catch (_) {}
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -22,6 +39,150 @@
       --running: #1d4ed8;
       --completed: #047857;
       --shadow: 0 24px 64px rgba(15, 23, 42, 0.12);
+      --bg-radial-1: rgba(15, 118, 110, 0.12);
+      --bg-radial-2: rgba(29, 78, 216, 0.11);
+      --bg-start: #eef2f8;
+      --bg-end: #f8fafc;
+      --hero-grad-start: #ffffff;
+      --hero-grad-end: #f7fbff;
+      --hero-border: rgba(15, 23, 42, 0.08);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --card-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      --btn-secondary-bg: #ffffff;
+      --btn-secondary-hover: rgba(255, 255, 255, 0.66);
+      --btn-secondary-shadow: 0 8px 18px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+      --btn-warn-bg: #ffffff;
+      --btn-warn-hover: rgba(255, 255, 255, 0.66);
+      --btn-warn-shadow: 0 8px 18px rgba(180, 35, 24, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+      --empty-bg: rgba(255, 255, 255, 0.72);
+      --modal-backdrop: rgba(4, 10, 22, 0.62);
+      --modal-border: rgba(15, 23, 42, 0.08);
+      --modal-header-bg: rgba(255, 255, 255, 0.9);
+      --mono-text: #122033;
+      --scoreboard-bg: #ffffff;
+      --field-bg: #ffffff;
+      --field-text: var(--text);
+      --field-border: var(--line);
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #10161f;
+      --surface: #151d28;
+      --surface-soft: #1a2431;
+      --text: #e6edf7;
+      --muted: #9aa8bc;
+      --line: #2a374a;
+      --brand: #4aa3ff;
+      --brand-strong: #2d8ae8;
+      --warn: #ff7d72;
+      --pending: #708090;
+      --running: #60a5fa;
+      --completed: #34d399;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+      --bg-radial-1: rgba(43, 105, 173, 0.22);
+      --bg-radial-2: rgba(25, 43, 73, 0.34);
+      --bg-start: #0d141d;
+      --bg-end: #141d29;
+      --hero-grad-start: #162130;
+      --hero-grad-end: #182536;
+      --hero-border: rgba(130, 157, 191, 0.18);
+      --card-border: rgba(130, 157, 191, 0.18);
+      --card-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+      --btn-secondary-bg: #1b2533;
+      --btn-secondary-hover: rgba(70, 91, 118, 0.38);
+      --btn-secondary-shadow: 0 8px 18px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      --btn-warn-bg: #231f22;
+      --btn-warn-hover: rgba(120, 53, 53, 0.38);
+      --btn-warn-shadow: 0 8px 18px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      --empty-bg: rgba(21, 29, 40, 0.82);
+      --modal-backdrop: rgba(3, 6, 10, 0.72);
+      --modal-border: rgba(130, 157, 191, 0.2);
+      --modal-header-bg: rgba(18, 26, 37, 0.92);
+      --mono-text: #cad7e8;
+      --scoreboard-bg: #182231;
+      --field-bg: #1a2533;
+      --field-text: #e6edf7;
+      --field-border: #324359;
+    }
+
+    :root[data-theme="matcha"] {
+      --bg: #edf3ea;
+      --surface: #f6fbf1;
+      --surface-soft: #edf5e7;
+      --text: #223328;
+      --muted: #4f6a58;
+      --line: #c8d9c7;
+      --brand: #5e8c55;
+      --brand-strong: #4f7a47;
+      --warn: #a03b2b;
+      --pending: #6c7a6f;
+      --running: #4d7196;
+      --completed: #3f7b57;
+      --shadow: 0 24px 64px rgba(45, 71, 52, 0.12);
+      --bg-radial-1: rgba(128, 171, 116, 0.18);
+      --bg-radial-2: rgba(194, 211, 150, 0.22);
+      --bg-start: #ebf2e5;
+      --bg-end: #f5f8ee;
+      --hero-grad-start: #f8fdf2;
+      --hero-grad-end: #eef6e6;
+      --hero-border: rgba(77, 112, 84, 0.15);
+      --card-border: rgba(77, 112, 84, 0.15);
+      --card-shadow: 0 10px 24px rgba(59, 98, 66, 0.1);
+      --btn-secondary-bg: #f6fbf1;
+      --btn-secondary-hover: rgba(246, 251, 241, 0.86);
+      --btn-secondary-shadow: 0 8px 18px rgba(76, 110, 84, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+      --btn-warn-bg: #f8f1ec;
+      --btn-warn-hover: rgba(248, 241, 236, 0.86);
+      --btn-warn-shadow: 0 8px 18px rgba(150, 88, 74, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      --empty-bg: rgba(246, 251, 241, 0.8);
+      --modal-backdrop: rgba(30, 40, 29, 0.48);
+      --modal-border: rgba(77, 112, 84, 0.17);
+      --modal-header-bg: rgba(246, 251, 241, 0.92);
+      --mono-text: #2e4a37;
+      --scoreboard-bg: #f8fcf4;
+      --field-bg: #f8fcf4;
+      --field-text: #223328;
+      --field-border: #c8d9c7;
+    }
+
+    :root[data-theme="black-mesa"] {
+      --bg: #21262c;
+      --surface: #2b3139;
+      --surface-soft: #323a44;
+      --text: #e6e8ea;
+      --muted: #b3bcc7;
+      --line: #46505c;
+      --brand: #d7832f;
+      --brand-strong: #bc6f23;
+      --warn: #ff8f5d;
+      --pending: #8b95a2;
+      --running: #f39b4a;
+      --completed: #84c98b;
+      --shadow: 0 24px 64px rgba(0, 0, 0, 0.34);
+      --bg-radial-1: rgba(215, 131, 47, 0.18);
+      --bg-radial-2: rgba(83, 94, 111, 0.3);
+      --bg-start: #1f242a;
+      --bg-end: #2a3038;
+      --hero-grad-start: #313844;
+      --hero-grad-end: #2a3038;
+      --hero-border: rgba(215, 131, 47, 0.24);
+      --card-border: rgba(215, 131, 47, 0.2);
+      --card-shadow: 0 10px 28px rgba(0, 0, 0, 0.31);
+      --btn-secondary-bg: #343c47;
+      --btn-secondary-hover: rgba(90, 103, 121, 0.45);
+      --btn-secondary-shadow: 0 8px 18px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      --btn-warn-bg: #3b3230;
+      --btn-warn-hover: rgba(137, 91, 69, 0.42);
+      --btn-warn-shadow: 0 8px 18px rgba(0, 0, 0, 0.31), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      --empty-bg: rgba(43, 49, 57, 0.84);
+      --modal-backdrop: rgba(10, 12, 15, 0.74);
+      --modal-border: rgba(215, 131, 47, 0.24);
+      --modal-header-bg: rgba(43, 49, 57, 0.94);
+      --mono-text: #d9dee6;
+      --scoreboard-bg: #303742;
+      --field-bg: #353e49;
+      --field-text: #e6e8ea;
+      --field-border: #505a67;
     }
 
     * { box-sizing: border-box; }
@@ -32,9 +193,9 @@
       font-family: "Space Grotesk", "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(1200px 640px at -8% -12%, rgba(15, 118, 110, 0.12), transparent 58%),
-        radial-gradient(980px 680px at 110% -18%, rgba(29, 78, 216, 0.11), transparent 55%),
-        linear-gradient(180deg, #eef2f8 0%, #f8fafc 100%);
+        radial-gradient(1200px 640px at -8% -12%, var(--bg-radial-1), transparent 58%),
+        radial-gradient(980px 680px at 110% -18%, var(--bg-radial-2), transparent 55%),
+        linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
     }
 
     .app {
@@ -51,8 +212,8 @@
     }
 
     .hero-card {
-      background: linear-gradient(145deg, #ffffff, #f7fbff);
-      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: linear-gradient(145deg, var(--hero-grad-start), var(--hero-grad-end));
+      border: 1px solid var(--hero-border);
       border-radius: 18px;
       padding: 20px;
       box-shadow: var(--shadow);
@@ -148,26 +309,48 @@
       box-shadow: 0 6px 16px rgba(15, 118, 110, 0.2);
     }
     .btn.secondary {
-      background: white;
+      background: var(--btn-secondary-bg);
       color: var(--text);
       border-color: var(--line);
       box-shadow: none;
     }
     .btn.secondary:hover {
-      background: rgba(255, 255, 255, 0.66);
+      background: var(--btn-secondary-hover);
       border-color: rgba(148, 163, 184, 0.7);
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+      box-shadow: var(--btn-secondary-shadow);
     }
     .btn.warn {
-      background: white;
+      background: var(--btn-warn-bg);
       color: var(--warn);
       border-color: rgba(180, 35, 24, 0.34);
       box-shadow: none;
     }
     .btn.warn:hover {
-      background: rgba(255, 255, 255, 0.66);
+      background: var(--btn-warn-hover);
       border-color: rgba(180, 35, 24, 0.45);
-      box-shadow: 0 8px 18px rgba(180, 35, 24, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+      box-shadow: var(--btn-warn-shadow);
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .theme-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .theme-control select {
+      min-width: 190px;
+      padding: 9px 10px;
     }
 
     .dashboard {
@@ -178,10 +361,10 @@
 
     .card {
       background: var(--surface);
-      border: 1px solid rgba(15, 23, 42, 0.08);
+      border: 1px solid var(--card-border);
       border-radius: 14px;
       padding: 14px;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      box-shadow: var(--card-shadow);
     }
 
     .card-top {
@@ -239,7 +422,7 @@
     }
 
     .empty {
-      background: rgba(255, 255, 255, 0.72);
+      background: var(--empty-bg);
       border: 1px dashed var(--line);
       border-radius: 14px;
       padding: 26px;
@@ -253,7 +436,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(4, 10, 22, 0.62);
+      background: var(--modal-backdrop);
       backdrop-filter: blur(4px);
       z-index: 40;
       padding: 16px;
@@ -267,7 +450,7 @@
       overflow: auto;
       background: var(--surface);
       border-radius: 16px;
-      border: 1px solid rgba(15, 23, 42, 0.08);
+      border: 1px solid var(--modal-border);
       box-shadow: 0 24px 64px rgba(2, 6, 23, 0.28);
       animation: pop 220ms ease both;
     }
@@ -281,7 +464,7 @@
       padding: 14px 16px;
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.9);
+      background: var(--modal-header-bg);
       backdrop-filter: blur(2px);
       z-index: 3;
     }
@@ -319,9 +502,9 @@
     select {
       padding: 10px;
       border-radius: 10px;
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--text);
+      border: 1px solid var(--field-border);
+      background: var(--field-bg);
+      color: var(--field-text);
     }
 
     .inline {
@@ -361,7 +544,7 @@
       font-size: 12px;
       line-height: 1.42;
       white-space: pre-wrap;
-      color: #122033;
+      color: var(--mono-text);
       max-height: 260px;
       overflow: auto;
     }
@@ -373,7 +556,7 @@
       padding: 10px 12px;
       border: 1px solid var(--line);
       border-radius: 12px;
-      background: white;
+      background: var(--scoreboard-bg);
     }
 
     @keyframes rise {
@@ -391,6 +574,20 @@
       .detail-grid,
       .field-grid {
         grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .toolbar-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .theme-control select {
+        min-width: 160px;
       }
 
       .app { padding: 18px 12px 32px; }
@@ -429,7 +626,18 @@
 
     <div class="toolbar">
       <p class="status-text" id="statusText">Connecting to backend...</p>
-      <button class="btn" id="openCreateBtn" type="button">Create Simulation</button>
+      <div class="toolbar-actions">
+        <label class="theme-control" for="themeSelect">
+          Options / Theme
+          <select id="themeSelect">
+            <option value="default-light">Default (Light)</option>
+            <option value="dark">Dark</option>
+            <option value="matcha">Matcha</option>
+            <option value="black-mesa">Black Mesa</option>
+          </select>
+        </label>
+        <button class="btn" id="openCreateBtn" type="button">Create Simulation</button>
+      </div>
     </div>
 
     <section class="dashboard" id="dashboard"></section>
