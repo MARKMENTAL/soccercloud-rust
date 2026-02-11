@@ -81,9 +81,16 @@ Then open:
 http://127.0.0.1:9009
 ```
 
+Open web mode on all network interfaces (`0.0.0.0:9009`) so other machines can access it:
+
+```bash
+cargo run -- --web --listen-open
+```
+
 Notes:
 - The web frontend (`index.html` + `data.js`) now uses Rust backend APIs.
 - Simulation logic runs server-side in Rust (shared with CLI/TUI engine).
+- `--listen-open` is only valid with `--web` and should be used on trusted networks.
 
 ### Quick match (headless)
 

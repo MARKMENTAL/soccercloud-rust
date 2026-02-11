@@ -457,17 +457,28 @@ async fn api_export_csv(path: web::Path<usize>, state: web::Data<SharedState>) -
         .body(csv)
 }
 
-pub fn run_web_server(base_seed: u64, speed: Speed) -> io::Result<()> {
+pub fn run_web_server(base_seed: u64, speed: Speed, listen_open: bool) -> io::Result<()> {
     let shared = SharedState {
         inner: Arc::new(Mutex::new(WebState::new(base_seed, speed))),
     };
 
     let ticker = shared.clone();
+    let bind_host = if listen_open { "0.0.0.0" } else { "127.0.0.1" };
+    let display_host = if listen_open {
+        "<machine-ip>"
+    } else {
+        "127.0.0.1"
+    };
 
     println!(
-        "Starting SoccerCloud web UI at http://127.0.0.1:{WEB_PORT} (seed={base_seed}, speed={})",
-        speed.label()
+        "Starting SoccerCloud web UI at http://{display_host}:{WEB_PORT} (bound {bind_host}:{WEB_PORT}, seed={base_seed}, speed={})",
+        speed.label(),
     );
+    if listen_open {
+        println!(
+            "Open listen enabled: accessible from other machines on your network at http://<machine-ip>:{WEB_PORT}"
+        );
+    }
 
     actix_web::rt::System::new().block_on(async move {
         actix_web::rt::spawn(async move {
@@ -507,7 +518,7 @@ pub fn run_web_server(base_seed: u64, speed: Speed) -> io::Result<()> {
                         ),
                 )
         })
-        .bind(("127.0.0.1", WEB_PORT))?
+        .bind((bind_host, WEB_PORT))?
         .run()
         .await
     })

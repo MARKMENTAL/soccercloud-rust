@@ -96,3 +96,13 @@
 - Reused Rust simulation engine and instance lifecycle for backend execution.
 - Rebuilt `index.html` and `data.js` as a modern web dashboard UI backed by Rust APIs.
 - Removed legacy client-side simulation engine from the browser path.
+
+## 2026-02-11 - Open listen option for web mode
+
+### Scope completed
+- Added `--listen-open` CLI argument for web mode.
+- Enforced `--listen-open` usage only when `--web` is present.
+- Updated web server bind address behavior:
+  - default: `127.0.0.1:9009`
+  - open listen: `0.0.0.0:9009`
+- Updated startup logs and README usage examples for LAN-accessible mode.
