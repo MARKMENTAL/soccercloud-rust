@@ -269,6 +269,12 @@ async fn data_js() -> impl Responder {
         .body(include_str!("../data.js"))
 }
 
+async fn sc_logo_jpg() -> impl Responder {
+    HttpResponse::Ok()
+        .insert_header((header::CONTENT_TYPE, "image/jpeg"))
+        .body(include_bytes!("../sc-logo.jpg").as_slice())
+}
+
 async fn api_teams() -> impl Responder {
     let items: Vec<TeamDto> = TEAMS
         .iter()
@@ -497,6 +503,7 @@ pub fn run_web_server(base_seed: u64, speed: Speed, listen_open: bool) -> io::Re
                 .route("/", web::get().to(index_html))
                 .route("/index.html", web::get().to(index_html))
                 .route("/data.js", web::get().to(data_js))
+                .route("/sc-logo.jpg", web::get().to(sc_logo_jpg))
                 .service(
                     web::scope("/api")
                         .route("/teams", web::get().to(api_teams))

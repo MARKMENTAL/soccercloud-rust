@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/jpeg" href="sc-logo.jpg" />
   <title>SoccerCloud Web</title>
   <script>
     (function () {
@@ -227,6 +228,16 @@
       color: var(--brand);
       margin: 0 0 8px;
       font-weight: 700;
+    }
+
+    .hero-logo {
+      width: 80px;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      margin: 0 0 12px;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
     }
 
     h1 {
@@ -598,6 +609,7 @@
   <main class="app">
     <section class="hero">
       <article class="hero-card">
+        <img class="hero-logo" src="sc-logo.jpg" alt="SoccerCloud logo" />
         <p class="eyebrow">Rust Backend</p>
         <h1>SoccerCloud Web Control Room</h1>
         <p class="lead">A modern web frontend backed by the same Rust simulation engine used in CLI and TUI modes.</p>
