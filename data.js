@@ -147,16 +147,26 @@ function createCardElement(sim) {
   return article;
 }
 
+function setTextIfChanged(element, nextValue) {
+  if (!element) return;
+  if (element.textContent !== nextValue) {
+    element.textContent = nextValue;
+  }
+}
+
 function updateCardElement(card, sim) {
-  card.querySelector('[data-role="title"]').textContent = sim.title;
-  card.querySelector('[data-role="idline"]').textContent = `sim-${sim.id} | ${sim.mode} | seed=${sim.seed}`;
-  card.querySelector('[data-role="progress"]').textContent = sim.progress;
-  card.querySelector('[data-role="scoreboard"]').textContent = sim.scoreboard;
-  card.querySelector('[data-role="outcome"]').textContent = sim.outcome;
+  setTextIfChanged(card.querySelector('[data-role="title"]'), sim.title);
+  setTextIfChanged(card.querySelector('[data-role="idline"]'), `sim-${sim.id} | ${sim.mode} | seed=${sim.seed}`);
+  setTextIfChanged(card.querySelector('[data-role="progress"]'), sim.progress);
+  setTextIfChanged(card.querySelector('[data-role="scoreboard"]'), sim.scoreboard);
+  setTextIfChanged(card.querySelector('[data-role="outcome"]'), sim.outcome);
 
   const pill = card.querySelector('[data-role="pill"]');
-  pill.className = `pill ${sim.status}`;
-  pill.textContent = sim.status;
+  const nextPillClass = `pill ${sim.status}`;
+  if (pill.className !== nextPillClass) {
+    pill.className = nextPillClass;
+  }
+  setTextIfChanged(pill, sim.status);
 
   if (card.dataset.status !== sim.status) {
     card.dataset.status = sim.status;
@@ -169,8 +179,18 @@ function renderDashboard() {
   if (!root) return;
 
   if (state.simulations.length === 0) {
-    root.innerHTML = `<div class="empty" id="dashboardEmpty">No simulation instances yet. Create one to start the web simulation flow.</div>`;
+    for (const card of root.querySelectorAll("article.card")) {
+      card.remove();
+    }
+    if (!$("dashboardEmpty")) {
+      root.innerHTML = `<div class="empty" id="dashboardEmpty">No simulation instances yet. Create one to start the web simulation flow.</div>`;
+    }
     return;
+  }
+
+  const emptyNode = $("dashboardEmpty");
+  if (emptyNode) {
+    emptyNode.remove();
   }
 
   const existingCards = new Map(
@@ -178,24 +198,27 @@ function renderDashboard() {
   );
 
   const activeIds = new Set(state.simulations.map((sim) => sim.id));
-  const fragment = document.createDocumentFragment();
 
-  for (const sim of state.simulations) {
+  for (let index = 0; index < state.simulations.length; index += 1) {
+    const sim = state.simulations[index];
     let card = existingCards.get(sim.id);
     if (!card) {
       card = createCardElement(sim);
+      root.appendChild(card);
     }
+
     updateCardElement(card, sim);
-    fragment.appendChild(card);
+
+    if (root.children[index] !== card) {
+      root.insertBefore(card, root.children[index] || null);
+    }
   }
 
   for (const [id, card] of existingCards.entries()) {
-    if (!activeIds.has(id) && card.parentElement === root) {
+    if (!activeIds.has(id)) {
       card.remove();
     }
   }
-
-  root.replaceChildren(fragment);
 }
 
 function renderStats() {
