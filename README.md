@@ -67,6 +67,24 @@ Use a global seed for reproducibility:
 cargo run -- --seed 42
 ```
 
+### Web mode (Actix)
+
+Launch the web UI on port `9009`:
+
+```bash
+cargo run -- --web
+```
+
+Then open:
+
+```text
+http://127.0.0.1:9009
+```
+
+Notes:
+- The web frontend (`index.html` + `data.js`) now uses Rust backend APIs.
+- Simulation logic runs server-side in Rust (shared with CLI/TUI engine).
+
 ### Quick match (headless)
 
 ```bash
@@ -143,6 +161,7 @@ Readable fullscreen data panels:
 ```text
 src/
 ├── main.rs        # CLI entrypoint and commands
+├── web.rs         # Actix web server + JSON APIs
 ├── app.rs         # App state and event loop
 ├── data.rs        # Teams, flags, tactics, profiles
 ├── sim.rs         # Match/league/knockout simulation engine

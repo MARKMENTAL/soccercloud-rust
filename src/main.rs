@@ -5,6 +5,7 @@ mod instance;
 mod sim;
 mod ui;
 mod utils;
+mod web;
 
 use std::fs::File;
 use std::io::{self, Write};
@@ -16,6 +17,7 @@ use data::{display_name, TEAMS};
 use export::simulation_to_csv_bytes;
 use sim::{run_simulation, SimulationType};
 use utils::{derive_seed, Rng};
+use web::run_web_server;
 
 #[derive(Debug, Parser)]
 #[command(name = "soccercloud")]
@@ -26,6 +28,9 @@ struct Cli {
 
     #[arg(long, global = true, value_enum, default_value_t = Speed::X1)]
     speed: Speed,
+
+    #[arg(long, global = true)]
+    web: bool,
 
     #[command(subcommand)]
     command: Option<Commands>,
@@ -70,6 +75,16 @@ impl From<ModeArg> for SimulationType {
 fn main() -> io::Result<()> {
     let cli = Cli::parse();
     let base_seed = cli.seed.unwrap_or_else(|| Rng::from_time().next_u64());
+
+    if cli.web {
+        if cli.command.is_some() {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "--web cannot be combined with subcommands",
+            ));
+        }
+        return run_web_server(base_seed, cli.speed);
+    }
 
     match cli.command {
         None => {

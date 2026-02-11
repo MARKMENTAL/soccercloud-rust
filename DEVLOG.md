@@ -86,3 +86,13 @@
 - Added national-team flag mappings, including `PRC China`.
 - Added tactic/formation profile mappings for the new national teams.
 - Verified with `list` and deterministic `quick` simulation using national teams.
+
+## 2026-02-11 - Web mode with Actix and Rust-backed frontend
+
+### Scope completed
+- Added `--web` launch mode to start an Actix server at `127.0.0.1:9009`.
+- Implemented web APIs for team listing and simulation lifecycle:
+  - create/list/detail/start/clone/delete/export CSV
+- Reused Rust simulation engine and instance lifecycle for backend execution.
+- Rebuilt `index.html` and `data.js` as a modern web dashboard UI backed by Rust APIs.
+- Removed legacy client-side simulation engine from the browser path.
