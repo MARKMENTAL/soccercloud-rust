@@ -59,7 +59,7 @@ pub const TACTICS: [Tactic; 4] = [
     },
 ];
 
-pub const TEAMS: [&str; 29] = [
+pub const TEAMS: [&str; 85] = [
     "Kashima Antlers",
     "Urawa Red Diamonds",
     "Gamba Osaka",
@@ -89,6 +89,62 @@ pub const TEAMS: [&str; 29] = [
     "Benfica",
     "Porto",
     "Celtic",
+    "England",
+    "France",
+    "Spain",
+    "Germany",
+    "Italy",
+    "Portugal",
+    "Netherlands",
+    "Belgium",
+    "Croatia",
+    "Denmark",
+    "Switzerland",
+    "Austria",
+    "Sweden",
+    "Norway",
+    "Poland",
+    "Serbia",
+    "Turkey",
+    "Ukraine",
+    "Czech Republic",
+    "Scotland",
+    "Argentina",
+    "Brazil",
+    "Uruguay",
+    "Colombia",
+    "Chile",
+    "Peru",
+    "Ecuador",
+    "Paraguay",
+    "Bolivia",
+    "Venezuela",
+    "United States",
+    "Mexico",
+    "Canada",
+    "Costa Rica",
+    "Panama",
+    "Jamaica",
+    "Honduras",
+    "Japan",
+    "South Korea",
+    "Australia",
+    "Iran",
+    "Saudi Arabia",
+    "Qatar",
+    "Iraq",
+    "United Arab Emirates",
+    "PRC China",
+    "Morocco",
+    "Senegal",
+    "Nigeria",
+    "Egypt",
+    "Algeria",
+    "Tunisia",
+    "Ghana",
+    "Cameroon",
+    "Ivory Coast",
+    "South Africa",
 ];
 
 pub fn team_flag(team: &str) -> &'static str {
@@ -113,6 +169,61 @@ pub fn team_flag(team: &str) -> &'static str {
         "Juventus" | "Inter" | "AC Milan" => "🇮🇹",
         "Ajax" => "🇳🇱",
         "Benfica" | "Porto" => "🇵🇹",
+        "England" | "Scotland" => "🇬🇧",
+        "France" => "🇫🇷",
+        "Spain" => "🇪🇸",
+        "Germany" => "🇩🇪",
+        "Italy" => "🇮🇹",
+        "Portugal" => "🇵🇹",
+        "Netherlands" => "🇳🇱",
+        "Belgium" => "🇧🇪",
+        "Croatia" => "🇭🇷",
+        "Denmark" => "🇩🇰",
+        "Switzerland" => "🇨🇭",
+        "Austria" => "🇦🇹",
+        "Sweden" => "🇸🇪",
+        "Norway" => "🇳🇴",
+        "Poland" => "🇵🇱",
+        "Serbia" => "🇷🇸",
+        "Turkey" => "🇹🇷",
+        "Ukraine" => "🇺🇦",
+        "Czech Republic" => "🇨🇿",
+        "Argentina" => "🇦🇷",
+        "Brazil" => "🇧🇷",
+        "Uruguay" => "🇺🇾",
+        "Colombia" => "🇨🇴",
+        "Chile" => "🇨🇱",
+        "Peru" => "🇵🇪",
+        "Ecuador" => "🇪🇨",
+        "Paraguay" => "🇵🇾",
+        "Bolivia" => "🇧🇴",
+        "Venezuela" => "🇻🇪",
+        "United States" => "🇺🇸",
+        "Mexico" => "🇲🇽",
+        "Canada" => "🇨🇦",
+        "Costa Rica" => "🇨🇷",
+        "Panama" => "🇵🇦",
+        "Jamaica" => "🇯🇲",
+        "Honduras" => "🇭🇳",
+        "Japan" => "🇯🇵",
+        "South Korea" => "🇰🇷",
+        "Australia" => "🇦🇺",
+        "Iran" => "🇮🇷",
+        "Saudi Arabia" => "🇸🇦",
+        "Qatar" => "🇶🇦",
+        "Iraq" => "🇮🇶",
+        "United Arab Emirates" => "🇦🇪",
+        "PRC China" => "🇨🇳",
+        "Morocco" => "🇲🇦",
+        "Senegal" => "🇸🇳",
+        "Nigeria" => "🇳🇬",
+        "Egypt" => "🇪🇬",
+        "Algeria" => "🇩🇿",
+        "Tunisia" => "🇹🇳",
+        "Ghana" => "🇬🇭",
+        "Cameroon" => "🇨🇲",
+        "Ivory Coast" => "🇨🇮",
+        "South Africa" => "🇿🇦",
         _ => "🏳️",
     }
 }
@@ -245,6 +356,52 @@ pub fn profile_for(team: &str) -> TeamProfile {
         },
         "JEF United Chiba" => TeamProfile {
             formation: "4-3-3",
+            tactic: "counter",
+        },
+        "Spain" | "Netherlands" | "Portugal" | "Japan" | "PRC China" => TeamProfile {
+            formation: "4-3-3",
+            tactic: "possession",
+        },
+        "England" | "Germany" | "France" | "Brazil" | "Argentina" | "Belgium" | "United States"
+        | "South Korea" | "Morocco" | "Nigeria" => TeamProfile {
+            formation: "4-2-3-1",
+            tactic: "high_press",
+        },
+        "Italy" | "Croatia" | "Denmark" | "Switzerland" | "Uruguay" | "Mexico" | "Canada"
+        | "Iran" | "Saudi Arabia" | "Senegal" | "Algeria" | "Tunisia" => TeamProfile {
+            formation: "4-4-2",
+            tactic: "counter",
+        },
+        "Austria"
+        | "Sweden"
+        | "Norway"
+        | "Poland"
+        | "Serbia"
+        | "Turkey"
+        | "Ukraine"
+        | "Czech Republic"
+        | "Scotland"
+        | "Colombia"
+        | "Chile"
+        | "Peru"
+        | "Ecuador"
+        | "Paraguay"
+        | "Bolivia"
+        | "Venezuela"
+        | "Costa Rica"
+        | "Panama"
+        | "Jamaica"
+        | "Honduras"
+        | "Australia"
+        | "Qatar"
+        | "Iraq"
+        | "United Arab Emirates"
+        | "Egypt"
+        | "Ghana"
+        | "Cameroon"
+        | "Ivory Coast"
+        | "South Africa" => TeamProfile {
+            formation: "4-2-3-1",
             tactic: "counter",
         },
         _ => TeamProfile {

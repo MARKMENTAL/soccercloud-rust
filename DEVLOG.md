@@ -78,3 +78,11 @@
 - Added modal scrolling controls (`j/k` or up/down) and close controls (`Esc` or `q`).
 - Simplified detail view to focus on scoreboard, logs, and instance info.
 - Added detail-panel hint bar to direct users to the new dedicated modals.
+
+## 2026-02-10 - National team expansion
+
+### Scope completed
+- Expanded team database to include 50+ national teams in addition to existing clubs.
+- Added national-team flag mappings, including `PRC China`.
+- Added tactic/formation profile mappings for the new national teams.
+- Verified with `list` and deterministic `quick` simulation using national teams.
