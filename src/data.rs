@@ -10,12 +10,6 @@ pub struct Tactic {
     pub press_mult: f64,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct TeamProfile {
-    pub formation: &'static str,
-    pub tactic: &'static str,
-}
-
 pub const TACTICS: [Tactic; 4] = [
     Tactic {
         key: "counter",
@@ -59,177 +53,564 @@ pub const TACTICS: [Tactic; 4] = [
     },
 ];
 
-pub const TEAMS: [&str; 85] = [
-    "Kashima Antlers",
-    "Urawa Red Diamonds",
-    "Gamba Osaka",
-    "Cerezo Osaka",
-    "Kawasaki Frontale",
-    "Yokohama F. Marinos",
-    "Nagoya Grampus",
-    "Shimizu S-Pulse",
-    "Sanfrecce Hiroshima",
-    "Consadole Sapporo",
-    "Ventforet Kofu",
-    "Tokyo Verdy",
-    "JEF United Chiba",
-    "Arsenal",
-    "FC Barcelona",
-    "Real Madrid",
-    "Manchester City",
-    "Manchester United",
-    "Liverpool",
-    "Bayern Munich",
-    "Borussia Dortmund",
-    "Paris Saint-Germain",
-    "Juventus",
-    "Inter",
-    "AC Milan",
-    "Ajax",
-    "Benfica",
-    "Porto",
-    "Celtic",
-    "England",
-    "France",
-    "Spain",
-    "Germany",
-    "Italy",
-    "Portugal",
-    "Netherlands",
-    "Belgium",
-    "Croatia",
-    "Denmark",
-    "Switzerland",
-    "Austria",
-    "Sweden",
-    "Norway",
-    "Poland",
-    "Serbia",
-    "Turkey",
-    "Ukraine",
-    "Czech Republic",
-    "Scotland",
-    "Argentina",
-    "Brazil",
-    "Uruguay",
-    "Colombia",
-    "Chile",
-    "Peru",
-    "Ecuador",
-    "Paraguay",
-    "Bolivia",
-    "Venezuela",
-    "United States",
-    "Mexico",
-    "Canada",
-    "Costa Rica",
-    "Panama",
-    "Jamaica",
-    "Honduras",
-    "Japan",
-    "South Korea",
-    "Australia",
-    "Iran",
-    "Saudi Arabia",
-    "Qatar",
-    "Iraq",
-    "United Arab Emirates",
-    "PRC China",
-    "Morocco",
-    "Senegal",
-    "Nigeria",
-    "Egypt",
-    "Algeria",
-    "Tunisia",
-    "Ghana",
-    "Cameroon",
-    "Ivory Coast",
-    "South Africa",
+#[derive(Debug, Clone, Copy)]
+pub struct Team {
+    pub name: &'static str,
+    pub flag: &'static str,
+    pub formation: &'static str,
+    pub tactic: &'static str,
+}
+
+pub const TEAMS_DATA: [Team; 85] = [
+    // J-League Clubs
+    Team {
+        name: "Kashima Antlers",
+        flag: "🇯🇵",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Urawa Red Diamonds",
+        flag: "🇯🇵",
+        formation: "4-2-3-1",
+        tactic: "possession",
+    },
+    Team {
+        name: "Gamba Osaka",
+        flag: "🇯🇵",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Cerezo Osaka",
+        flag: "🇯🇵",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Kawasaki Frontale",
+        flag: "🇯🇵",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Yokohama F. Marinos",
+        flag: "🇯🇵",
+        formation: "4-3-3",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Nagoya Grampus",
+        flag: "🇯🇵",
+        formation: "4-2-3-1",
+        tactic: "low_block",
+    },
+    Team {
+        name: "Shimizu S-Pulse",
+        flag: "🇯🇵",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Sanfrecce Hiroshima",
+        flag: "🇯🇵",
+        formation: "3-5-2",
+        tactic: "possession",
+    },
+    Team {
+        name: "Consadole Sapporo",
+        flag: "🇯🇵",
+        formation: "3-5-2",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Ventforet Kofu",
+        flag: "🇯🇵",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Tokyo Verdy",
+        flag: "🇯🇵",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "JEF United Chiba",
+        flag: "🇯🇵",
+        formation: "4-3-3",
+        tactic: "counter",
+    },
+    // European Clubs
+    Team {
+        name: "Arsenal",
+        flag: "🇬🇧",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "FC Barcelona",
+        flag: "🇪🇸",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Real Madrid",
+        flag: "🇪🇸",
+        formation: "4-3-3",
+        tactic: "counter",
+    },
+    Team {
+        name: "Manchester City",
+        flag: "🇬🇧",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Manchester United",
+        flag: "🇬🇧",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Liverpool",
+        flag: "🇬🇧",
+        formation: "4-3-3",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Bayern Munich",
+        flag: "🇩🇪",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Borussia Dortmund",
+        flag: "🇩🇪",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Paris Saint-Germain",
+        flag: "🇫🇷",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Juventus",
+        flag: "🇮🇹",
+        formation: "3-5-2",
+        tactic: "low_block",
+    },
+    Team {
+        name: "Inter",
+        flag: "🇮🇹",
+        formation: "3-5-2",
+        tactic: "low_block",
+    },
+    Team {
+        name: "AC Milan",
+        flag: "🇮🇹",
+        formation: "4-2-3-1",
+        tactic: "possession",
+    },
+    Team {
+        name: "Ajax",
+        flag: "🇳🇱",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Benfica",
+        flag: "🇵🇹",
+        formation: "4-2-3-1",
+        tactic: "possession",
+    },
+    Team {
+        name: "Porto",
+        flag: "🇵🇹",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Celtic",
+        flag: "🇬🇧",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    // UEFA National Teams
+    Team {
+        name: "England",
+        flag: "🇬🇧",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "France",
+        flag: "🇫🇷",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Spain",
+        flag: "🇪🇸",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Germany",
+        flag: "🇩🇪",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Italy",
+        flag: "🇮🇹",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Portugal",
+        flag: "🇵🇹",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Netherlands",
+        flag: "🇳🇱",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "Belgium",
+        flag: "🇧🇪",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Croatia",
+        flag: "🇭🇷",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Denmark",
+        flag: "🇩🇰",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Switzerland",
+        flag: "🇨🇭",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Austria",
+        flag: "🇦🇹",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Sweden",
+        flag: "🇸🇪",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Norway",
+        flag: "🇳🇴",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Poland",
+        flag: "🇵🇱",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Serbia",
+        flag: "🇷🇸",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Turkey",
+        flag: "🇹🇷",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Ukraine",
+        flag: "🇺🇦",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Czech Republic",
+        flag: "🇨🇿",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Scotland",
+        flag: "🇬🇧",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    // CONMEBOL National Teams
+    Team {
+        name: "Argentina",
+        flag: "🇦🇷",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Brazil",
+        flag: "🇧🇷",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Uruguay",
+        flag: "🇺🇾",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Colombia",
+        flag: "🇨🇴",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Chile",
+        flag: "🇨🇱",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Peru",
+        flag: "🇵🇪",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Ecuador",
+        flag: "🇪🇨",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Paraguay",
+        flag: "🇵🇾",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Bolivia",
+        flag: "🇧🇴",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Venezuela",
+        flag: "🇻🇪",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    // CONCACAF National Teams
+    Team {
+        name: "United States",
+        flag: "🇺🇸",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Mexico",
+        flag: "🇲🇽",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Canada",
+        flag: "🇨🇦",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Costa Rica",
+        flag: "🇨🇷",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Panama",
+        flag: "🇵🇦",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Jamaica",
+        flag: "🇯🇲",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Honduras",
+        flag: "🇭🇳",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    // AFC/OFC National Teams
+    Team {
+        name: "Japan",
+        flag: "🇯🇵",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    Team {
+        name: "South Korea",
+        flag: "🇰🇷",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Australia",
+        flag: "🇦🇺",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Iran",
+        flag: "🇮🇷",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Saudi Arabia",
+        flag: "🇸🇦",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Qatar",
+        flag: "🇶🇦",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Iraq",
+        flag: "🇮🇶",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "United Arab Emirates",
+        flag: "🇦🇪",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "PRC China",
+        flag: "🇨🇳",
+        formation: "4-3-3",
+        tactic: "possession",
+    },
+    // CAF National Teams
+    Team {
+        name: "Morocco",
+        flag: "🇲🇦",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Senegal",
+        flag: "🇸🇳",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Nigeria",
+        flag: "🇳🇬",
+        formation: "4-2-3-1",
+        tactic: "high_press",
+    },
+    Team {
+        name: "Egypt",
+        flag: "🇪🇬",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Algeria",
+        flag: "🇩🇿",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Tunisia",
+        flag: "🇹🇳",
+        formation: "4-4-2",
+        tactic: "counter",
+    },
+    Team {
+        name: "Ghana",
+        flag: "🇬🇭",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Cameroon",
+        flag: "🇨🇲",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "Ivory Coast",
+        flag: "🇨🇮",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
+    Team {
+        name: "South Africa",
+        flag: "🇿🇦",
+        formation: "4-2-3-1",
+        tactic: "counter",
+    },
 ];
 
-pub fn team_flag(team: &str) -> &'static str {
-    match team {
-        "Kashima Antlers"
-        | "Urawa Red Diamonds"
-        | "Gamba Osaka"
-        | "Cerezo Osaka"
-        | "Kawasaki Frontale"
-        | "Yokohama F. Marinos"
-        | "Nagoya Grampus"
-        | "Shimizu S-Pulse"
-        | "Sanfrecce Hiroshima"
-        | "Consadole Sapporo"
-        | "Ventforet Kofu"
-        | "Tokyo Verdy"
-        | "JEF United Chiba" => "🇯🇵",
-        "Arsenal" | "Manchester City" | "Manchester United" | "Liverpool" | "Celtic" => "🇬🇧",
-        "FC Barcelona" | "Real Madrid" => "🇪🇸",
-        "Bayern Munich" | "Borussia Dortmund" => "🇩🇪",
-        "Paris Saint-Germain" => "🇫🇷",
-        "Juventus" | "Inter" | "AC Milan" => "🇮🇹",
-        "Ajax" => "🇳🇱",
-        "Benfica" | "Porto" => "🇵🇹",
-        "England" | "Scotland" => "🇬🇧",
-        "France" => "🇫🇷",
-        "Spain" => "🇪🇸",
-        "Germany" => "🇩🇪",
-        "Italy" => "🇮🇹",
-        "Portugal" => "🇵🇹",
-        "Netherlands" => "🇳🇱",
-        "Belgium" => "🇧🇪",
-        "Croatia" => "🇭🇷",
-        "Denmark" => "🇩🇰",
-        "Switzerland" => "🇨🇭",
-        "Austria" => "🇦🇹",
-        "Sweden" => "🇸🇪",
-        "Norway" => "🇳🇴",
-        "Poland" => "🇵🇱",
-        "Serbia" => "🇷🇸",
-        "Turkey" => "🇹🇷",
-        "Ukraine" => "🇺🇦",
-        "Czech Republic" => "🇨🇿",
-        "Argentina" => "🇦🇷",
-        "Brazil" => "🇧🇷",
-        "Uruguay" => "🇺🇾",
-        "Colombia" => "🇨🇴",
-        "Chile" => "🇨🇱",
-        "Peru" => "🇵🇪",
-        "Ecuador" => "🇪🇨",
-        "Paraguay" => "🇵🇾",
-        "Bolivia" => "🇧🇴",
-        "Venezuela" => "🇻🇪",
-        "United States" => "🇺🇸",
-        "Mexico" => "🇲🇽",
-        "Canada" => "🇨🇦",
-        "Costa Rica" => "🇨🇷",
-        "Panama" => "🇵🇦",
-        "Jamaica" => "🇯🇲",
-        "Honduras" => "🇭🇳",
-        "Japan" => "🇯🇵",
-        "South Korea" => "🇰🇷",
-        "Australia" => "🇦🇺",
-        "Iran" => "🇮🇷",
-        "Saudi Arabia" => "🇸🇦",
-        "Qatar" => "🇶🇦",
-        "Iraq" => "🇮🇶",
-        "United Arab Emirates" => "🇦🇪",
-        "PRC China" => "🇨🇳",
-        "Morocco" => "🇲🇦",
-        "Senegal" => "🇸🇳",
-        "Nigeria" => "🇳🇬",
-        "Egypt" => "🇪🇬",
-        "Algeria" => "🇩🇿",
-        "Tunisia" => "🇹🇳",
-        "Ghana" => "🇬🇭",
-        "Cameroon" => "🇨🇲",
-        "Ivory Coast" => "🇨🇮",
-        "South Africa" => "🇿🇦",
-        _ => "🏳️",
+/// Generate team names array dynamically from TEAMS_DATA at compile time
+const fn extract_team_names<const N: usize>(data: &[Team; N]) -> [&str; N] {
+    let mut result = [""; N];
+    let mut i = 0;
+    while i < N {
+        result[i] = data[i].name;
+        i += 1;
     }
+    result
+}
+
+/// Team names array automatically derived from TEAMS_DATA
+pub const TEAMS: [&str; TEAMS_DATA.len()] = extract_team_names(&TEAMS_DATA);
+
+pub fn team_by_name(name: &str) -> Option<&'static Team> {
+    TEAMS_DATA.iter().find(|t| t.name == name)
+}
+
+pub fn team_flag(team: &str) -> &'static str {
+    team_by_name(team).map(|t| t.flag).unwrap_or("🏳️")
 }
 
 pub fn display_name(team: &str) -> String {
     format!("{} {}", team_flag(team), team)
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct TeamProfile {
+    pub formation: &'static str,
+    pub tactic: &'static str,
 }
 
 pub fn tactic_by_key(key: &str) -> Tactic {
@@ -241,172 +622,13 @@ pub fn tactic_by_key(key: &str) -> Tactic {
 }
 
 pub fn profile_for(team: &str) -> TeamProfile {
-    match team {
-        "Arsenal" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "FC Barcelona" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "Real Madrid" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "counter",
-        },
-        "Manchester City" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "Manchester United" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "high_press",
-        },
-        "Liverpool" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "high_press",
-        },
-        "Bayern Munich" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "high_press",
-        },
-        "Borussia Dortmund" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "high_press",
-        },
-        "Paris Saint-Germain" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "Juventus" => TeamProfile {
-            formation: "3-5-2",
-            tactic: "low_block",
-        },
-        "Inter" => TeamProfile {
-            formation: "3-5-2",
-            tactic: "low_block",
-        },
-        "AC Milan" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "possession",
-        },
-        "Ajax" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "Benfica" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "possession",
-        },
-        "Porto" => TeamProfile {
+    team_by_name(team)
+        .map(|t| TeamProfile {
+            formation: t.formation,
+            tactic: t.tactic,
+        })
+        .unwrap_or(TeamProfile {
             formation: "4-4-2",
             tactic: "counter",
-        },
-        "Celtic" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "Kawasaki Frontale" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "Yokohama F. Marinos" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "high_press",
-        },
-        "Kashima Antlers" => TeamProfile {
-            formation: "4-4-2",
-            tactic: "counter",
-        },
-        "Urawa Red Diamonds" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "possession",
-        },
-        "Gamba Osaka" => TeamProfile {
-            formation: "4-4-2",
-            tactic: "counter",
-        },
-        "Cerezo Osaka" => TeamProfile {
-            formation: "4-4-2",
-            tactic: "counter",
-        },
-        "Nagoya Grampus" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "low_block",
-        },
-        "Sanfrecce Hiroshima" => TeamProfile {
-            formation: "3-5-2",
-            tactic: "possession",
-        },
-        "Consadole Sapporo" => TeamProfile {
-            formation: "3-5-2",
-            tactic: "high_press",
-        },
-        "Shimizu S-Pulse" => TeamProfile {
-            formation: "4-4-2",
-            tactic: "counter",
-        },
-        "Ventforet Kofu" => TeamProfile {
-            formation: "4-4-2",
-            tactic: "counter",
-        },
-        "Tokyo Verdy" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "JEF United Chiba" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "counter",
-        },
-        "Spain" | "Netherlands" | "Portugal" | "Japan" | "PRC China" => TeamProfile {
-            formation: "4-3-3",
-            tactic: "possession",
-        },
-        "England" | "Germany" | "France" | "Brazil" | "Argentina" | "Belgium" | "United States"
-        | "South Korea" | "Morocco" | "Nigeria" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "high_press",
-        },
-        "Italy" | "Croatia" | "Denmark" | "Switzerland" | "Uruguay" | "Mexico" | "Canada"
-        | "Iran" | "Saudi Arabia" | "Senegal" | "Algeria" | "Tunisia" => TeamProfile {
-            formation: "4-4-2",
-            tactic: "counter",
-        },
-        "Austria"
-        | "Sweden"
-        | "Norway"
-        | "Poland"
-        | "Serbia"
-        | "Turkey"
-        | "Ukraine"
-        | "Czech Republic"
-        | "Scotland"
-        | "Colombia"
-        | "Chile"
-        | "Peru"
-        | "Ecuador"
-        | "Paraguay"
-        | "Bolivia"
-        | "Venezuela"
-        | "Costa Rica"
-        | "Panama"
-        | "Jamaica"
-        | "Honduras"
-        | "Australia"
-        | "Qatar"
-        | "Iraq"
-        | "United Arab Emirates"
-        | "Egypt"
-        | "Ghana"
-        | "Cameroon"
-        | "Ivory Coast"
-        | "South Africa" => TeamProfile {
-            formation: "4-2-3-1",
-            tactic: "counter",
-        },
-        _ => TeamProfile {
-            formation: "4-4-2",
-            tactic: "counter",
-        },
-    }
+        })
 }
