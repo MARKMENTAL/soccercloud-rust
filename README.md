@@ -1,126 +1,168 @@
-# ⚽ SoccerCloud — Cloudified Soccer Simulation Environment
+# SoccerCloud CLI (Rust)
 
-**Live Demo:** [https://mentalnet.xyz/soccercloud/](https://mentalnet.xyz/soccercloud/)  
-**Author:** [markmental / MentalNet.xyz](https://mentalnet.xyz)  
-**License:** MIT  
+Terminal-native rebuild of MentalNet SoccerCloud with a cloud-dashboard feel.
 
----
+## Overview
 
-## 🧠 Overview
+This project is a Rust TUI/CLI soccer simulator with:
 
-**SoccerCloud** is a browser-based soccer simulator that reimagines match simulations through the aesthetic and structure of a **cloud orchestration dashboard** — think *OpenStack meets Football Manager*.
+- Single Match, 4-Team League, and 4-Team Knockout modes
+- Live match logs, scoreboard, and instance lifecycle controls
+- Seeded deterministic runs (`--seed`) for reproducible results
+- CSV export for single, league, and knockout outputs
+- Expanded team pool (clubs + 50+ national teams, including `PRC China`)
 
-Each match, league, or knockout bracket behaves like a **“virtual instance”**, complete with lifecycle controls:
-- **Create / Start / View / Delete / Clone / Export**  
-- Real-time logs, xG data, formations, and tactical analytics  
-- **Dynamic UI** styled like a cloud console with per-match telemetry
+## Requirements
 
-SoccerCloud is written entirely in **HTML, CSS, and vanilla JavaScript**, with no external backend dependencies. It runs fully client-side and is suitable for static hosting.
+- Rust toolchain (stable)
+- Cargo
+- A terminal that supports UTF-8 and colors
 
----
-
-## 🌐 Live Deployment
-
-> [https://mentalnet.xyz/soccercloud/](https://mentalnet.xyz/soccercloud/)
-
-Hosted on **MentalNet.xyz**, the current deployment showcases all features including:
-- Match instance dashboard  
-- 4-team League and Knockout modes  
-- CSV export of results and tables  
-- Auto-team picker with J-League and European clubs  
-- Cloud-inspired modal configuration UI  
-
----
-
-## 🏗️ Features
-
-| Category | Description |
-|-----------|-------------|
-| **Simulation Types** | Single Match, 4-Team League, 4-Team Knockout |
-| **Team Database** | Includes J-League + top European clubs with realistic formations/tactics |
-| **UI Design** | Styled like a lightweight OpenStack/Proxmox console |
-| **Export Options** | Download match or league data as CSV |
-| **Logging & Recaps** | Live xG updates, goal commentary, and tactical analysis |
-| **Client-Only** | Runs directly in browser — no backend needed |
-
----
-
-## 🗂️ Project Structure
-
-```
-
-soccercloud/
-├── index.html      # Main web dashboard and simulation logic
-├── data.js         # Team definitions, flags, formations, and tactics
-└── assets/         # (Optional) icons, logos, or future expansion files
-
-````
-
----
-
-## 🚀 Getting Started (Local)
-
-You can run SoccerCloud locally with **no build process** — just open it in a browser.
-
-### Option 1: Double-click
-```bash
-open index.html
-````
-
-### Option 2: Local dev server
+Install Rust (if needed):
 
 ```bash
-python3 -m http.server 8080
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Then visit:
-👉 `http://localhost:8080`
+## Setup
 
----
+Clone and build:
 
-## 🧩 Technical Notes
+```bash
+git clone <your-repo-url>
+cd soccercloud-cli
+cargo check
+```
 
-* Written in **vanilla JavaScript** for speed and transparency.
-* Each simulation instance is handled via a `SimulationInstance` class.
-* Data persistence is session-based; future versions may support saving instance states.
-* CSS uses retro **UnifrakturCook + Press Start 2P** fonts for a distinct MentalNet look.
+Run in debug mode:
 
----
+```bash
+cargo run
+```
 
-## 🖥️ Upcoming: CLI Edition
+Build optimized binary:
 
-> ⚡ **tuxsoccercloud** *(Coming soon!)*
+```bash
+cargo build --release
+./target/release/soccercloud
+```
 
-A simplified **terminal version** of the simulator is in development — ideal for users who prefer a command-line workflow or want to integrate match simulations into scripts or data pipelines.
+## CLI Usage
 
-Planned features:
+Default (interactive TUI):
 
-* Text-only match recaps and league tables
-* Randomized or argument-based team selection
-* Fully offline operation
+```bash
+soccercloud
+```
 
----
+or with Cargo:
 
-## 🤝 Contributing
+```bash
+cargo run --
+```
 
-Pull requests are welcome (when I get signups up)!
-To contribute:
+Use a global seed for reproducibility:
 
-1. Fork this repository
-2. Make your edits in a feature branch
-3. Submit a pull request with a clear description
+```bash
+cargo run -- --seed 42
+```
 
----
+### Quick match (headless)
 
-## 💡 Credits
+```bash
+cargo run -- quick --home "Arsenal" --away "Real Madrid" --seed 42
+```
 
-* Built and designed by **markmental**
-* Hosted under **MentalNet.xyz**
-* Inspired by *OpenStack Horizon* dashboards and *Football Manager*-style simulations
-* Font assets via [Google Fonts](https://fonts.google.com)
-* Icons via [Font Awesome](https://fontawesome.com)
+CPU auto-fill for missing team(s):
 
----
+```bash
+cargo run -- quick --home "England" --seed 42
+cargo run -- quick --seed 42
+```
 
-### ⚽ *"Deploy your next match like a VM — welcome to SoccerCloud."*
+### List teams
 
+```bash
+cargo run -- list
+```
+
+### Export CSV
+
+Single:
+
+```bash
+cargo run -- export --mode single --team "Arsenal" --team "PRC China" --out match.csv --seed 42
+```
+
+League:
+
+```bash
+cargo run -- export --mode league4 --team "England" --team "Brazil" --team "Japan" --team "Germany" --out league.csv --seed 42
+```
+
+Knockout:
+
+```bash
+cargo run -- export --mode knockout4 --team "France" --team "Argentina" --team "Morocco" --team "PRC China" --out knockout.csv --seed 42
+```
+
+## TUI Controls
+
+Global:
+
+- `n` create Single instance
+- `l` create League4 instance
+- `o` create Knockout4 instance
+- `s` start selected instance
+- `c` clone selected instance
+- `d` delete selected instance
+- `e` export selected instance CSV
+- `v` or `Enter` toggle dashboard/detail
+- `j/k` or `Up/Down` navigate instances
+- `1/2/4/0` speed control (1x/2x/4x/instant)
+- `q` quit
+
+Create modal:
+
+- `m` set selected slot to manual team
+- `p` set selected slot to CPU auto-fill
+- `[` / `]` or `Left/Right` cycle manual team
+- `Enter` create
+- `Esc` cancel
+
+Readable fullscreen data panels:
+
+- `t` stats modal
+- `g` standings/bracket modal
+- `h` history modal
+- `j/k` or `Up/Down` scroll inside modal
+- `Esc` or `q` close modal
+
+## Project Structure
+
+```text
+src/
+├── main.rs        # CLI entrypoint and commands
+├── app.rs         # App state and event loop
+├── data.rs        # Teams, flags, tactics, profiles
+├── sim.rs         # Match/league/knockout simulation engine
+├── instance.rs    # Simulation instance lifecycle and state
+├── export.rs      # CSV export
+├── utils.rs       # RNG + helper utilities
+└── ui/
+    ├── mod.rs
+    ├── dashboard.rs
+    ├── detail.rs
+    ├── modal.rs
+    └── widgets.rs
+```
+
+## Notes
+
+- Dependency policy is intentionally strict (minimal crates).
+- Team data is embedded in the binary (no external runtime data files).
+- Use `--seed` for deterministic comparisons and debugging.
+
+## License
+
+MIT
