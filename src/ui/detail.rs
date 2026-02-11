@@ -3,7 +3,6 @@ use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, List, ListItem, Paragraph};
 
 use crate::app::App;
-use crate::instance::SimStatus;
 
 pub fn render(f: &mut Frame<'_>, area: Rect, app: &App) {
     let Some(inst) = app.selected_instance() else {
@@ -15,11 +14,7 @@ pub fn render(f: &mut Frame<'_>, area: Rect, app: &App) {
 
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(3),
-            Constraint::Min(8),
-            Constraint::Length(2),
-        ])
+        .constraints([Constraint::Length(3), Constraint::Min(8)])
         .split(area);
 
     let score = Paragraph::new(inst.scoreboard.clone())
@@ -49,12 +44,6 @@ pub fn render(f: &mut Frame<'_>, area: Rect, app: &App) {
     f.render_widget(log_widget, middle[0]);
 
     let mut right_lines: Vec<ListItem> = Vec::new();
-    let status = match &inst.status {
-        SimStatus::Pending => "pending",
-        SimStatus::Running { .. } => "running",
-        SimStatus::Completed => "completed",
-    };
-    right_lines.push(ListItem::new(format!("Status: {}", status)));
     right_lines.push(ListItem::new(format!("Seed: {}", inst.seed)));
     right_lines.push(ListItem::new(format!("Mode: {}", inst.sim_type.as_str())));
     right_lines.push(ListItem::new(""));
@@ -68,8 +57,4 @@ pub fn render(f: &mut Frame<'_>, area: Rect, app: &App) {
             .borders(Borders::ALL),
     );
     f.render_widget(side, middle[1]);
-
-    let help = Paragraph::new("Open readable panels: t=Stats, g=Standings/Bracket, h=History")
-        .block(Block::default().borders(Borders::ALL).title("Panels"));
-    f.render_widget(help, chunks[2]);
 }
