@@ -34,7 +34,7 @@ Clone and build:
 
 ```bash
 git clone https://mentalnet.xyz/forgejo/markmental/soccercloud-rust.git
-cd soccercloud-cli
+cd soccercloud-rust
 cargo check
 ```
 
