@@ -1,5 +1,9 @@
 # SoccerCloud CLI (Rust)
 
+<p align="center">
+  <img src="sc-logo.jpg" alt="SoccerCloud Logo" width="200">
+</p>
+
 Terminal-native rebuild of MentalNet SoccerCloud with a cloud-dashboard feel.
 
 ## Overview
@@ -29,7 +33,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 Clone and build:
 
 ```bash
-git clone <your-repo-url>
+git clone https://mentalnet.xyz/forgejo/markmental/soccercloud-rust.git
 cd soccercloud-cli
 cargo check
 ```
