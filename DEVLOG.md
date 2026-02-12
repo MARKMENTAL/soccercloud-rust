@@ -1,5 +1,94 @@
 # DEVLOG
 
+## 2026-02-12 - v0.1.0 Initial Public Release
+
+### Scope completed
+- Marked v0.1.0 as the initial public release
+- Prepared README for public hosting:
+  - Added centered logo (sc-logo.jpg)
+  - Updated clone URL to MentalNet Forgejo instance
+- Configured dual remotes:
+  - `origin`: MentalNet Forgejo (primary)
+  - `github`: GitHub mirror
+
+### Release highlights
+- Rust CLI/TUI soccer simulator with minimal dependencies
+- Three simulation modes: Single Match, 4-Team League, 4-Team Knockout
+- Deterministic runs with `--seed` flag for reproducibility
+- Web mode with Actix backend (`--web`, `--listen-open`)
+- CSV export functionality
+- 50+ national teams + club teams
+- Interactive TUI with keyboard controls and fullscreen modals
+
+## 2026-02-11 - Open listen option for web mode
+
+### Scope completed
+- Added `--listen-open` CLI argument for web mode.
+- Enforced `--listen-open` usage only when `--web` is present.
+- Updated web server bind address behavior:
+  - default: `127.0.0.1:9009`
+  - open listen: `0.0.0.0:9009`
+- Updated startup logs and README usage examples for LAN-accessible mode.
+
+## 2026-02-11 - Web mode with Actix and Rust-backed frontend
+
+### Scope completed
+- Added `--web` launch mode to start an Actix server at `127.0.0.1:9009`.
+- Implemented web APIs for team listing and simulation lifecycle:
+  - create/list/detail/start/clone/delete/export CSV
+- Reused Rust simulation engine and instance lifecycle for backend execution.
+- Rebuilt `index.html` and `data.js` as a modern web dashboard UI backed by Rust APIs.
+- Removed legacy client-side simulation engine from the browser path.
+
+## 2026-02-10 - National team expansion
+
+### Scope completed
+- Expanded team database to include 50+ national teams in addition to existing clubs.
+- Added national-team flag mappings, including `PRC China`.
+- Added tactic/formation profile mappings for the new national teams.
+- Verified with `list` and deterministic `quick` simulation using national teams.
+
+## 2026-02-10 - Fullscreen info modals for readability
+
+### Scope completed
+- Added dedicated fullscreen overlay modals for:
+  - Stats (`t`)
+  - Standings/Bracket (`g`)
+  - History (`h`)
+- Added modal scrolling controls (`j/k` or up/down) and close controls (`Esc` or `q`).
+- Simplified detail view to focus on scoreboard, logs, and instance info.
+- Added detail-panel hint bar to direct users to the new dedicated modals.
+
+## 2026-02-10 - Live standings/bracket updates + possession surfacing
+
+### Scope completed
+- Added explicit possession fields to match results and surfaced them in quick mode output.
+- Added possession row to single-match CSV export output.
+- Implemented live detail updates driven by simulation frames:
+  - per-frame stats updates
+  - per-frame competition panel updates
+  - incremental history updates
+- Added live league standings snapshots after each fixture.
+- Added ASCII knockout tree bracket snapshots and updates after each semifinal/final.
+- Tuned detail view layout to allocate more space to stats/competition/history panels.
+
+## 2026-02-10 - Team selection controls (manual + CPU auto-fill)
+
+### Scope completed
+- Added interactive create modal in TUI for team slot configuration.
+- Added per-slot selection mode:
+  - `Manual` team selection
+  - `CPU auto-fill`
+- Kept deterministic behavior by resolving CPU team picks with the instance seed.
+- Added keyboard controls for modal flow:
+  - `m` set manual, `p` set CPU
+  - `[` / `]` or left/right to cycle manual teams
+  - up/down to switch slot
+  - Enter to create, Esc to cancel
+- Updated `quick` command to support optional `--home` / `--away`:
+  - If missing, CPU auto-fills from remaining teams.
+  - Same seed yields the same auto-filled teams and outcomes.
+
 ## 2026-02-10 - Rust CLI/TUI rebuild (strict dependencies)
 
 ### Scope completed
@@ -37,72 +126,3 @@
 - No external data files are required at runtime.
 - Team data is fully embedded in the binary.
 - CSV export format is mode-specific and generated with std I/O.
-
-## 2026-02-10 - Team selection controls (manual + CPU auto-fill)
-
-### Scope completed
-- Added interactive create modal in TUI for team slot configuration.
-- Added per-slot selection mode:
-  - `Manual` team selection
-  - `CPU auto-fill`
-- Kept deterministic behavior by resolving CPU team picks with the instance seed.
-- Added keyboard controls for modal flow:
-  - `m` set manual, `p` set CPU
-  - `[` / `]` or left/right to cycle manual teams
-  - up/down to switch slot
-  - Enter to create, Esc to cancel
-- Updated `quick` command to support optional `--home` / `--away`:
-  - If missing, CPU auto-fills from remaining teams.
-  - Same seed yields the same auto-filled teams and outcomes.
-
-## 2026-02-10 - Live standings/bracket updates + possession surfacing
-
-### Scope completed
-- Added explicit possession fields to match results and surfaced them in quick mode output.
-- Added possession row to single-match CSV export output.
-- Implemented live detail updates driven by simulation frames:
-  - per-frame stats updates
-  - per-frame competition panel updates
-  - incremental history updates
-- Added live league standings snapshots after each fixture.
-- Added ASCII knockout tree bracket snapshots and updates after each semifinal/final.
-- Tuned detail view layout to allocate more space to stats/competition/history panels.
-
-## 2026-02-10 - Fullscreen info modals for readability
-
-### Scope completed
-- Added dedicated fullscreen overlay modals for:
-  - Stats (`t`)
-  - Standings/Bracket (`g`)
-  - History (`h`)
-- Added modal scrolling controls (`j/k` or up/down) and close controls (`Esc` or `q`).
-- Simplified detail view to focus on scoreboard, logs, and instance info.
-- Added detail-panel hint bar to direct users to the new dedicated modals.
-
-## 2026-02-10 - National team expansion
-
-### Scope completed
-- Expanded team database to include 50+ national teams in addition to existing clubs.
-- Added national-team flag mappings, including `PRC China`.
-- Added tactic/formation profile mappings for the new national teams.
-- Verified with `list` and deterministic `quick` simulation using national teams.
-
-## 2026-02-11 - Web mode with Actix and Rust-backed frontend
-
-### Scope completed
-- Added `--web` launch mode to start an Actix server at `127.0.0.1:9009`.
-- Implemented web APIs for team listing and simulation lifecycle:
-  - create/list/detail/start/clone/delete/export CSV
-- Reused Rust simulation engine and instance lifecycle for backend execution.
-- Rebuilt `index.html` and `data.js` as a modern web dashboard UI backed by Rust APIs.
-- Removed legacy client-side simulation engine from the browser path.
-
-## 2026-02-11 - Open listen option for web mode
-
-### Scope completed
-- Added `--listen-open` CLI argument for web mode.
-- Enforced `--listen-open` usage only when `--web` is present.
-- Updated web server bind address behavior:
-  - default: `127.0.0.1:9009`
-  - open listen: `0.0.0.0:9009`
-- Updated startup logs and README usage examples for LAN-accessible mode.
