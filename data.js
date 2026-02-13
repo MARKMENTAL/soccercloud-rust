@@ -278,7 +278,7 @@ function renderStats() {
 }
 
 async function refreshSimulations() {
-  state.simulations = await request("/api/simulations");
+  state.simulations = await request("api/simulations");
   renderStats();
   renderDashboard();
 
@@ -301,7 +301,7 @@ function textOrPlaceholder(lines, fallback) {
 }
 
 async function loadDetail(id) {
-  const detail = await request(`/api/simulations/${id}`);
+  const detail = await request(`api/simulations/${id}`);
   state.selectedDetailId = id;
 
   $("detailTitle").textContent = `sim-${detail.id} - ${detail.title}`;
@@ -315,7 +315,7 @@ async function loadDetail(id) {
 async function createSimulation() {
   try {
     const payload = getCreatePayload();
-    const created = await request("/api/simulations", {
+    const created = await request("api/simulations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -330,7 +330,7 @@ async function createSimulation() {
 
 async function startSimulation(id) {
   try {
-    await request(`/api/simulations/${id}/start`, { method: "POST" });
+    await request(`api/simulations/${id}/start`, { method: "POST" });
     setStatus(`Started sim-${id}`);
     await refreshSimulations();
   } catch (error) {
@@ -340,7 +340,7 @@ async function startSimulation(id) {
 
 async function cloneSimulation(id) {
   try {
-    const created = await request(`/api/simulations/${id}/clone`, { method: "POST" });
+    const created = await request(`api/simulations/${id}/clone`, { method: "POST" });
     setStatus(`Cloned sim-${id} to sim-${created.id}`);
     await refreshSimulations();
   } catch (error) {
@@ -350,7 +350,7 @@ async function cloneSimulation(id) {
 
 async function deleteSimulation(id) {
   try {
-    await request(`/api/simulations/${id}`, { method: "DELETE" });
+    await request(`api/simulations/${id}`, { method: "DELETE" });
     if (state.selectedDetailId === id) {
       state.selectedDetailId = null;
       closeModal("detailModal");
@@ -363,7 +363,7 @@ async function deleteSimulation(id) {
 }
 
 function exportSimulation(id) {
-  window.location.href = `/api/simulations/${id}/export.csv`;
+  window.location.href = `api/simulations/${id}/export.csv`;
   setStatus(`Exporting sim-${id} CSV...`);
 }
 
@@ -421,7 +421,7 @@ async function boot() {
   bindEvents();
   try {
     setStatus("Loading configuration, teams and simulations...");
-    const config = await request("/api/config");
+    const config = await request("api/config");
     state.demo = config.demo;
     
     // Show/hide demo banner
@@ -434,7 +434,7 @@ async function boot() {
       }
     }
     
-    state.teams = await request("/api/teams");
+    state.teams = await request("api/teams");
     renderTeamSelectors();
     await refreshSimulations();
     setStatus(`Connected to SoccerCloud backend on port 9009.${state.demo ? " (Demo mode)" : ""}`);
