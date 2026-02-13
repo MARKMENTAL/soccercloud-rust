@@ -221,6 +221,21 @@
       animation: rise 420ms ease both;
     }
 
+    .demo-banner {
+      background: linear-gradient(135deg, #b42318, #dc2626);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .demo-banner.visible {
+      display: block;
+    }
+
     .eyebrow {
       font-size: 12px;
       text-transform: uppercase;
@@ -609,6 +624,7 @@
   <main class="app">
     <section class="hero">
       <article class="hero-card">
+        <div class="demo-banner" id="demoBanner">DEMO MODE - Limited to 6 simulations with auto-rotation. Manual deletion disabled.</div>
         <img class="hero-logo" src="sc-logo.jpg" alt="SoccerCloud logo" />
         <p class="eyebrow">Rust Backend</p>
         <h1>SoccerCloud Web Control Room</h1>

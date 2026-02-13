@@ -35,6 +35,9 @@ struct Cli {
     #[arg(long, global = true)]
     listen_open: bool,
 
+    #[arg(long, global = true)]
+    demo: bool,
+
     #[command(subcommand)]
     command: Option<Commands>,
 }
@@ -93,7 +96,14 @@ fn main() -> io::Result<()> {
                 "--web cannot be combined with subcommands",
             ));
         }
-        return run_web_server(base_seed, cli.speed, cli.listen_open);
+        return run_web_server(base_seed, cli.speed, cli.listen_open, cli.demo);
+    }
+
+    if cli.demo {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "--demo can only be used with --web",
+        ));
     }
 
     match cli.command {

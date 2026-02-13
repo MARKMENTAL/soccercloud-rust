@@ -3,6 +3,7 @@ const state = {
   simulations: [],
   selectedDetailId: null,
   pollHandle: null,
+  demo: false,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -148,10 +149,11 @@ function getCreatePayload() {
 }
 
 function cardActions(sim) {
+  const deleteButton = state.demo ? "" : `<button class="btn warn" data-action="delete" data-id="${sim.id}">Delete</button>`;
   const common = `
     <button class="btn secondary" data-action="view" data-id="${sim.id}">View</button>
     <button class="btn secondary" data-action="clone" data-id="${sim.id}">Clone</button>
-    <button class="btn warn" data-action="delete" data-id="${sim.id}">Delete</button>
+    ${deleteButton}
   `;
 
   if (sim.status === "pending") {
@@ -418,11 +420,24 @@ async function boot() {
   initThemeControls();
   bindEvents();
   try {
-    setStatus("Loading teams and simulations...");
+    setStatus("Loading configuration, teams and simulations...");
+    const config = await request("/api/config");
+    state.demo = config.demo;
+    
+    // Show/hide demo banner
+    const demoBanner = $("demoBanner");
+    if (demoBanner) {
+      if (state.demo) {
+        demoBanner.classList.add("visible");
+      } else {
+        demoBanner.classList.remove("visible");
+      }
+    }
+    
     state.teams = await request("/api/teams");
     renderTeamSelectors();
     await refreshSimulations();
-    setStatus("Connected to SoccerCloud backend on port 9009.");
+    setStatus(`Connected to SoccerCloud backend on port 9009.${state.demo ? " (Demo mode)" : ""}`);
   } catch (error) {
     setStatus(`Startup failed: ${error.message}`);
     return;

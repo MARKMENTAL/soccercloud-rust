@@ -1,5 +1,17 @@
 # DEVLOG
 
+## 2026-02-13 - v0.1.1 Demo mode
+
+### Scope completed
+- Added `--demo` CLI argument for web mode only.
+- Demo mode features:
+  - Limited to 6 simulations maximum
+  - FIFO rotation: creating a 7th simulation removes the oldest
+  - Manual deletion disabled (returns 403 Forbidden)
+  - Demo banner displayed in hero-card element
+- Added `/api/config` endpoint to expose demo mode status to frontend.
+- Frontend hides delete buttons when in demo mode.
+
 ## 2026-02-12 - v0.1.0 Initial Public Release
 
 ### Scope completed

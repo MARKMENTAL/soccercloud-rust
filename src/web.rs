@@ -23,15 +23,17 @@ struct SharedState {
 struct WebState {
     base_seed: u64,
     speed: Speed,
+    demo: bool,
     next_id: usize,
     instances: Vec<SimulationInstance>,
 }
 
 impl WebState {
-    fn new(base_seed: u64, speed: Speed) -> Self {
+    fn new(base_seed: u64, speed: Speed, demo: bool) -> Self {
         Self {
             base_seed,
             speed,
+            demo,
             next_id: 0,
             instances: Vec::new(),
         }
@@ -116,6 +118,11 @@ struct CreateSimulationRequest {
 #[derive(Debug, Serialize)]
 struct CreateSimulationResponse {
     id: usize,
+}
+
+#[derive(Debug, Serialize)]
+struct ConfigResponse {
+    demo: bool,
 }
 
 fn sim_type_label(sim_type: SimulationType) -> &'static str {
@@ -275,6 +282,18 @@ async fn sc_logo_jpg() -> impl Responder {
         .body(include_bytes!("../sc-logo.jpg").as_slice())
 }
 
+async fn api_config(state: web::Data<SharedState>) -> impl Responder {
+    let guard = match state.inner.lock() {
+        Ok(g) => g,
+        Err(_) => {
+            return HttpResponse::InternalServerError().json(ErrorDto {
+                error: "state lock poisoned".to_string(),
+            })
+        }
+    };
+    HttpResponse::Ok().json(ConfigResponse { demo: guard.demo })
+}
+
 async fn api_teams() -> impl Responder {
     let items: Vec<TeamDto> = TEAMS
         .iter()
@@ -340,6 +359,13 @@ async fn api_create_simulation(
         });
     };
 
+    // Demo mode: FIFO rotation - remove oldest if at limit
+    const DEMO_MAX_INSTANCES: usize = 6;
+    if guard.demo && guard.instances.len() >= DEMO_MAX_INSTANCES {
+        // Remove the oldest simulation (first in the vec)
+        guard.instances.remove(0);
+    }
+
     let id = guard.next_id;
     let seed = guard.next_seed();
     let auto_fill = payload.auto_fill.unwrap_or(true);
@@ -399,6 +425,13 @@ async fn api_clone_simulation(
         });
     };
 
+    // Demo mode: FIFO rotation - remove oldest if at limit
+    const DEMO_MAX_INSTANCES: usize = 6;
+    if guard.demo && guard.instances.len() >= DEMO_MAX_INSTANCES {
+        // Remove the oldest simulation (first in the vec)
+        guard.instances.remove(0);
+    }
+
     let new_id = guard.next_id;
     let new_seed = guard.next_seed();
     let clone = existing.clone_as(new_id, new_seed);
@@ -421,6 +454,13 @@ async fn api_delete_simulation(
             })
         }
     };
+
+    // Disable manual deletion in demo mode
+    if guard.demo {
+        return HttpResponse::Forbidden().json(ErrorDto {
+            error: "Manual deletion is disabled in demo mode".to_string(),
+        });
+    }
 
     if guard.remove_simulation(id) {
         return HttpResponse::NoContent().finish();
@@ -463,9 +503,9 @@ async fn api_export_csv(path: web::Path<usize>, state: web::Data<SharedState>) -
         .body(csv)
 }
 
-pub fn run_web_server(base_seed: u64, speed: Speed, listen_open: bool) -> io::Result<()> {
+pub fn run_web_server(base_seed: u64, speed: Speed, listen_open: bool, demo: bool) -> io::Result<()> {
     let shared = SharedState {
-        inner: Arc::new(Mutex::new(WebState::new(base_seed, speed))),
+        inner: Arc::new(Mutex::new(WebState::new(base_seed, speed, demo))),
     };
 
     let ticker = shared.clone();
@@ -506,6 +546,7 @@ pub fn run_web_server(base_seed: u64, speed: Speed, listen_open: bool) -> io::Re
                 .route("/sc-logo.jpg", web::get().to(sc_logo_jpg))
                 .service(
                     web::scope("/api")
+                        .route("/config", web::get().to(api_config))
                         .route("/teams", web::get().to(api_teams))
                         .route("/simulations", web::get().to(api_list_simulations))
                         .route("/simulations", web::post().to(api_create_simulation))
